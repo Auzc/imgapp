@@ -54,9 +54,9 @@ public class TypeFragment extends Fragment {
     private void setupViewPager(ViewPager viewPager) {
         Adapter adapter = new Adapter(getChildFragmentManager());
 
-        adapter.addFragment(new UserFragment(), R.drawable.love);
-        adapter.addFragment(new UserFragment(),  R.drawable.love);
-        adapter.addFragment(new UserFragment(), R.drawable.love);
+        adapter.addFragment(new AllocFragment(), R.drawable.love);
+        adapter.addFragment(new AllocFragment(),  R.drawable.love);
+        adapter.addFragment(new AllocFragment(), R.drawable.love);
 //        adapter.addFragment(new UserFragment(),  R.drawable.love);
 
         viewPager.setAdapter(adapter);
