@@ -51,7 +51,7 @@
             android:name="TencentMapSDK"
             android:value="KGVBZ-63FKH-UQBDK-WWTWJ-XIZEO-SRBOG"/>
 
-        <activity android:name="com.example.demo.AddActivity" />
+        <activity android:name="com.example.demo.CardDetailActivity" />
     </application>
 
 </manifest>

@@ -46,15 +46,15 @@ public class TypeFragment extends Fragment {
 //            //tabLayout.getTabAt(i).setIcon(tabIcons[i]);
 //            tabLayout.getTabAt(i).setText("666");
 //        }
-        tabLayout.getTabAt(0).setText("特征划分");
-        tabLayout.getTabAt(1).setText("色彩划分");
-        tabLayout.getTabAt(2).setText("美学评分");
+        tabLayout.getTabAt(0).setText("色彩划分");
+        tabLayout.getTabAt(1).setText("特征划分");
+        tabLayout.getTabAt(2).setText("地点划分");
     }
 
     private void setupViewPager(ViewPager viewPager) {
         Adapter adapter = new Adapter(getChildFragmentManager());
 
-        adapter.addFragment(new AllocFragment(), R.drawable.love);
+        adapter.addFragment(new ColorFragment(), R.drawable.love);
         adapter.addFragment(new AllocFragment(),  R.drawable.love);
         adapter.addFragment(new AllocFragment(), R.drawable.love);
 //        adapter.addFragment(new UserFragment(),  R.drawable.love);

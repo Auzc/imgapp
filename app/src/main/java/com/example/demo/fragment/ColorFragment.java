@@ -1,0 +1,307 @@
+package com.example.demo.fragment;
+
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import com.example.demo.R;
+import com.example.demo.adapter.ColorAdapter;
+import com.example.demo.data.MyColor;
+import java.util.ArrayList;
+import java.util.List;
+
+public class ColorFragment extends Fragment {
+
+    private RecyclerView recyclerView;
+    private ColorAdapter colorAdapter;
+    private List<MyColor> colors;
+
+    public ColorFragment() {
+        // Required empty public constructor
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_color, container, false);
+        recyclerView = view.findViewById(R.id.recycler_view);
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        setupRecyclerView();
+    }
+
+    private void setupRecyclerView() {
+        colors = generateColors(); // generate some example colors
+        colorAdapter = new ColorAdapter(requireContext(), colors);
+        recyclerView.setLayoutManager(new GridLayoutManager(requireContext(), 2));
+        recyclerView.setAdapter(colorAdapter);
+    }
+
+    private List<MyColor> generateColors() {
+        List<MyColor> colors = new ArrayList<>();
+        // Add some example colors
+        colors.add(new MyColor("黑色", "Black", "#000000"));
+        colors.add(new MyColor("暗灰色", "DarkGray", "#404040"));
+        colors.add(new MyColor("昏灰", "DimGray", "#696969"));
+        colors.add(new MyColor("灰色", "Gray", "#808080"));
+        colors.add(new MyColor("暗灰色(X11)", "DarkGray(X11)", "#A9A9A9"));
+        colors.add(new MyColor("银色", "Silver", "#C0C0C0"));
+        colors.add(new MyColor("浅灰色", "LightGray", "#D3D3D3"));
+        colors.add(new MyColor("庚斯博罗灰", "Gainsboro", "#DCDCDC"));
+        colors.add(new MyColor("白烟色", "WhiteSmoke", "#F5F5F5"));
+        colors.add(new MyColor("白色", "White", "#FFFFFF"));
+        colors.add(new MyColor("雪色", "Snow", "#FFFAFA"));
+        colors.add(new MyColor("铁灰色", "IronGray", "#625B57"));
+        colors.add(new MyColor("沙棕", "SandBeige", "#E6C3C3"));
+        colors.add(new MyColor("玫瑰褐", "RosyBrown", "#BC8F8F"));
+        colors.add(new MyColor("浅珊瑚色", "LightCoral", "#F08080"));
+        colors.add(new MyColor("印度红", "IndianRed", "#CD5C5C"));
+        colors.add(new MyColor("褐色", "Brown", "#A52A2A"));
+        colors.add(new MyColor("砖红色", "FireBrick", "#B22222"));
+        colors.add(new MyColor("栗色", "Maroon", "#800000"));
+        colors.add(new MyColor("暗红", "DarkRed", "#8B0000"));
+        colors.add(new MyColor("鲜红", "StrongRed", "#E60000"));
+        colors.add(new MyColor("红色", "Red", "#FF0000"));
+        colors.add(new MyColor("柿子橙", "Persimmon", "#FF4D40"));
+        colors.add(new MyColor("雾玫瑰色", "MistyRose", "#FFE4E1"));
+        colors.add(new MyColor("鲑红", "Salmon", "#FA8072"));
+        colors.add(new MyColor("腥红", "Scarlet", "#FF2400"));
+        colors.add(new MyColor("蕃茄红", "Tomato", "#FF6347"));
+        colors.add(new MyColor("暗鲑红", "DarkSalmon", "#E9967A"));
+        colors.add(new MyColor("珊瑚红", "Coral", "#FF7F50"));
+        colors.add(new MyColor("橙色", "Orange", "#FF6600"));
+        colors.add(new MyColor("橙红", "OrangeRed", "#FF4500"));
+        colors.add(new MyColor("浅鲑红", "LightSalmon", "#FFA07A"));
+        colors.add(new MyColor("朱红", "Vermilion", "#FF4D00"));
+        colors.add(new MyColor("赭黄", "Sienna", "#A0522D"));
+        colors.add(new MyColor("热带橙", "TropicalOrange", "#FF8033"));
+        colors.add(new MyColor("驼色", "Camel", "#A16B47"));
+        colors.add(new MyColor("杏黄", "Apricot", "#E69966"));
+        colors.add(new MyColor("椰褐", "CoconutBrown", "#4D1F00"));
+        colors.add(new MyColor("海贝色", "Seashell", "#FFF5EE"));
+        colors.add(new MyColor("鞍褐", "SaddleBrown", "#8B4513"));
+        colors.add(new MyColor("巧克力色", "Chocolate", "#D2691E"));
+        colors.add(new MyColor("阳橙", "SunOrange", "#FF7300"));
+        colors.add(new MyColor("沙褐", "SandBrown", "#F4A460"));
+        colors.add(new MyColor("铜色", "Bronze", "#CD7F32"));
+        colors.add(new MyColor("亚麻色", "Linen", "#FAF0E6"));
+        colors.add(new MyColor("蜜橙", "HoneyOrange", "#FFB366"));
+        colors.add(new MyColor("乌贼墨色", "Sepia", "#704214"));
+        colors.add(new MyColor("燃橙", "BurntOrange", "#CC5500"));
+        colors.add(new MyColor("赭色", "Ocher", "#CC7722"));
+        colors.add(new MyColor("秘鲁色", "Peru", "#CD853F"));
+        colors.add(new MyColor("橘色", "Tangerine", "#F28500"));
+        colors.add(new MyColor("暗橙", "DarkOrange", "#FF8C00"));
+        colors.add(new MyColor("古董白", "AntiqueWhite", "#FAEBD7"));
+        colors.add(new MyColor("日晒色", "Tan", "#D2B48C"));
+        colors.add(new MyColor("硬木色", "BurlyWood", "#DEB887"));
+        colors.add(new MyColor("粉扑桃色", "PeachPuff", "#FFDAB9"));
+        colors.add(new MyColor("那瓦霍白", "NavajoWhite", "#FFDEAD"));
+        colors.add(new MyColor("鹿皮鞋色", "Moccasin", "#FFE4B5"));
+        colors.add(new MyColor("陶坯黄", "Bisque", "#FFE4C4"));
+        colors.add(new MyColor("杏仁白", "BlanchedAlmond", "#FFEBCD"));
+        colors.add(new MyColor("蕃木瓜色", "PapayaWhip", "#FFEFD5"));
+        colors.add(new MyColor("玉米丝色", "Cornsilk", "#FFF8DC"));
+        colors.add(new MyColor("万寿菊黄", "Marigold", "#FF9900"));
+        colors.add(new MyColor("灰土色", "PaleOcre", "#CCB38C"));
+        colors.add(new MyColor("卡其色", "Khaki", "#996B1F"));
+        colors.add(new MyColor("旧蕾丝色", "OldLace", "#FDF5E6"));
+        colors.add(new MyColor("小麦色", "Wheat", "#F5DEB3"));
+        colors.add(new MyColor("桃色", "Peach", "#FFE5B4"));
+        colors.add(new MyColor("花卉白", "FloralWhite", "#FFFAF0"));
+        colors.add(new MyColor("金菊色", "Goldenrod", "#DAA520"));
+        colors.add(new MyColor("暗金菊色", "DarkGoldenrod", "#B8860B"));
+        colors.add(new MyColor("咖啡色", "Coffee", "#4D3900"));
+        colors.add(new MyColor("茉莉黄", "Jasmine", "#E6C35C"));
+        colors.add(new MyColor("琥珀色", "Amber", "#FFBF00"));
+        colors.add(new MyColor("铬黄", "ChromeYellow", "#E6B800"));
+        colors.add(new MyColor("金色", "Golden", "#FFD700"));
+        colors.add(new MyColor("浅卡其色", "LightKhaki", "#F0E68C"));
+        colors.add(new MyColor("暗卡其色", "DarkKhaki", "#BDB76B"));
+        colors.add(new MyColor("含羞草黄", "Mimosa", "#E6D933"));
+        colors.add(new MyColor("灰金菊色", "PaleGoldenrod", "#EEE8AA"));
+        colors.add(new MyColor("米色", "Beige", "#F5F5DC"));
+        colors.add(new MyColor("浅金菊黄", "LightGoldenrodYellow", "#FAFAD2"));
+        colors.add(new MyColor("柠檬绸色", "LemonChiffon", "#FFFACD"));
+        colors.add(new MyColor("奶油色", "Cream", "#FFFDD0"));
+        colors.add(new MyColor("浅黄色", "LightYellow", "#FFFFE0"));
+        colors.add(new MyColor("象牙色", "Ivory", "#FFFFF0"));
+        colors.add(new MyColor("香槟黄", "ChampagneYellow", "#FFFF99"));
+        colors.add(new MyColor("芥末黄", "Mustard", "#CCCC4D"));
+        colors.add(new MyColor("月黄", "MoonYellow", "#FFFF4D"));
+        colors.add(new MyColor("橄榄色", "Olive", "#808000"));
+        colors.add(new MyColor("鲜黄", "CanaryYellow", "#FFEF00"));
+        colors.add(new MyColor("黄色", "Yellow", "#FFFF00"));
+        colors.add(new MyColor("苔藓绿", "MossGreen", "#697723"));
+        colors.add(new MyColor("萤光黄色", "Fluorescentyellow", "#CCFF00"));
+        colors.add(new MyColor("橄榄军服绿", "OliveDrab", "#6B8E23"));
+        colors.add(new MyColor("黄绿", "YellowGreen", "#9ACD32"));
+        colors.add(new MyColor("暗橄榄绿", "DarkOliveGreen", "#556B2F"));
+        colors.add(new MyColor("苹果绿", "AppleGreen", "#8CE600"));
+        colors.add(new MyColor("绿黄", "GreenYellow", "#ADFF2F"));
+        colors.add(new MyColor("草绿", "GrassGreen", "#99E64D"));
+        colors.add(new MyColor("草坪绿", "LawnGreen", "#7CFC00"));
+        colors.add(new MyColor("查特酒绿", "Chartreuse", "#7FFF00"));
+        colors.add(new MyColor("叶绿", "FoliageGreen", "#73B839"));
+        colors.add(new MyColor("嫩绿", "FreshLeaves", "#99FF4D"));
+        colors.add(new MyColor("明亮绿", "BrightGreen", "#66FF00"));
+        colors.add(new MyColor("钴绿", "CobaltGreen", "#66FF59"));
+        colors.add(new MyColor("蜜瓜绿", "Honeydew", "#F0FFF0"));
+        colors.add(new MyColor("暗海绿", "DarkSeaGreen", "#8FBC8F"));
+        colors.add(new MyColor("浅绿色", "LightGreen", "#90EE90"));
+        colors.add(new MyColor("灰绿", "PaleGreen", "#98FB98"));
+        colors.add(new MyColor("常春藤绿", "IvyGreen", "#36BF36"));
+        colors.add(new MyColor("森林绿", "ForestGreen", "#228B22"));
+        colors.add(new MyColor("柠檬绿", "LimeGreen", "#32CD32"));
+        colors.add(new MyColor("暗绿", "DarkGreen", "#006600"));
+        colors.add(new MyColor("绿色", "Green", "#008000"));
+        colors.add(new MyColor("鲜绿色、莱姆色、青柠色", "Lime", "#00FF00"));
+        colors.add(new MyColor("孔雀石绿", "Malachite", "#22C32E"));
+        colors.add(new MyColor("薄荷绿", "Mint", "#16982B"));
+        colors.add(new MyColor("青瓷绿", "Celadon", "#ACE1AF"));
+        colors.add(new MyColor("孔雀石绿", "VeryLightMalachiteGreen", "#73E68C"));
+        colors.add(new MyColor("铬绿", "Viridian", "#127436"));
+        colors.add(new MyColor("苍色", "HorizonBlue", "#B8DDC8"));
+        colors.add(new MyColor("海绿", "SeaGreen", "#2E8B57"));
+        colors.add(new MyColor("中海绿", "MediumSeaGreen", "#3CB371"));
+        colors.add(new MyColor("绿松石绿", "TurquoiseGreen", "#4DE680"));
+        colors.add(new MyColor("碧绿", "Emerald", "#50C878"));
+        colors.add(new MyColor("薄荷奶油色", "MintCream", "#F5FFFA"));
+        colors.add(new MyColor("春绿", "SpringGreen", "#00FF80"));
+        colors.add(new MyColor("孔雀绿", "PeacockGreen", "#00A15C"));
+        colors.add(new MyColor("中春绿色", "MediumSpringGreen", "#00FA9A"));
+        colors.add(new MyColor("中碧蓝色", "MediumAquamarine", "#66CDAA"));
+        colors.add(new MyColor("碧蓝色", "Aquamarine", "#7FFFD4"));
+        colors.add(new MyColor("青蓝", "CyanBlue", "#0DBF8C"));
+        colors.add(new MyColor("水蓝", "AquaBlue", "#66FFE6"));
+        colors.add(new MyColor("浅水蓝", "LightAquaBlue", "#AFDFE4"));
+        colors.add(new MyColor("土耳其蓝", "TurquoiseBlue", "#00FFEF"));
+        colors.add(new MyColor("绿松石色", "Turquoise", "#40E0D0"));
+        colors.add(new MyColor("浅海绿色", "LightSeaGreen", "#20B2AA"));
+        colors.add(new MyColor("中绿松石色", "MediumTurquoise", "#48D1CC"));
+        colors.add(new MyColor("浅蓝", "BabyBlue", "#89CFF0"));
+        colors.add(new MyColor("灰绿松石色", "PaleTurquoise", "#AFEEEE"));
+        colors.add(new MyColor("暗岩灰", "DarkSlateGray", "#2F4F4F"));
+        colors.add(new MyColor("蓝绿色", "Teal", "#008080"));
+        colors.add(new MyColor("暗青", "DarkCyan", "#008B8B"));
+        colors.add(new MyColor("浅青色、浅水色", "LightCyan、LightAqua", "#E0FFFF"));
+        colors.add(new MyColor("青色、水色", "Cyan、Aqua", "#00FFFF"));
+        colors.add(new MyColor("暗绿松石色", "DarkTurquoise", "#00CED1"));
+        colors.add(new MyColor("军服蓝", "CadetBlue", "#5F9EA0"));
+        colors.add(new MyColor("孔雀蓝", "PeacockBlue", "#00808C"));
+        colors.add(new MyColor("浓蓝", "StrongBlue", "#006374"));
+        colors.add(new MyColor("浅蓝色", "LightBlue", "#ADD8E6"));
+        colors.add(new MyColor("粉蓝", "PowderBlue", "#B0E0E6"));
+        colors.add(new MyColor("灰蓝", "PaleBlue", "#D1EDF2"));
+        colors.add(new MyColor("爱丽丝蓝", "AliceBlue", "#F0F8FF"));
+        colors.add(new MyColor("萨克斯蓝", "SaxeBlue", "#4798B3"));
+        colors.add(new MyColor("深天蓝", "DeepSkyBlue", "#00BFFF"));
+        colors.add(new MyColor("水手蓝", "MarineBlue", "#00477D"));
+        colors.add(new MyColor("普鲁士蓝", "Prussianblue", "#003153"));
+        colors.add(new MyColor("道奇蓝", "DodgerBlue", "#1E90FF"));
+        colors.add(new MyColor("矿蓝", "MineralBlue", "#004D99"));
+        colors.add(new MyColor("蔚蓝色", "Cerulean", "#007BA7"));
+        colors.add(new MyColor("天蓝色", "Azure", "#007FFF"));
+        colors.add(new MyColor("韦奇伍德瓷蓝", "WedgwoodBlue", "#5686BF"));
+        colors.add(new MyColor("浅钢蓝色", "LightSteelBlue", "#B0C4DE"));
+        colors.add(new MyColor("灰丹宁布色", "PaleDenim", "#5E86C1"));
+        colors.add(new MyColor("鼠尾草蓝", "SalviaBlue", "#4D80E6"));
+        colors.add(new MyColor("暗粉蓝", "DarkPowderBlue", "#003399"));
+        colors.add(new MyColor("钴蓝", "CobaltBlue", "#0047AB"));
+        colors.add(new MyColor("蓝宝石色", "Sapphire", "#082567"));
+        colors.add(new MyColor("国际奇连蓝", "InternationalKleinBlue", "#002FA7"));
+        colors.add(new MyColor("蔚蓝", "Ceruleanblue", "#2A52BE"));
+        colors.add(new MyColor("品蓝", "RoyalBlue", "#4169E1"));
+        colors.add(new MyColor("暗矿蓝", "DarkMineralBlue", "#24367D"));
+        colors.add(new MyColor("极浓海蓝", "Ultramarine", "#0033FF"));
+        colors.add(new MyColor("幽灵白", "GhostWhite", "#F8F8FF"));
+        colors.add(new MyColor("薰衣草雾", "LavenderMist", "#E6E6FA"));
+        colors.add(new MyColor("薰衣草蓝", "LavenderBlue", "#CCCCFF"));
+        colors.add(new MyColor("长春花色", "Periwinkle", "#C3CDE6"));
+        colors.add(new MyColor("藏青", "NavyBlue", "#000080"));
+        colors.add(new MyColor("暗蓝", "DarkBlue", "#00008B"));
+        colors.add(new MyColor("中蓝", "MediumBlue", "#0000CD"));
+        colors.add(new MyColor("蓝色", "Blue", "#0000FF"));
+        colors.add(new MyColor("午夜蓝", "MidnightBlue", "#191970"));
+        colors.add(new MyColor("天青石蓝", "LapisLazuli", "#26619C"));
+        colors.add(new MyColor("浅灰紫", "GrayishPurple", "#8674A1"));
+        colors.add(new MyColor("钢青色", "SteelBlue", "#4682B4"));
+        colors.add(new MyColor("暗岩蓝", "DarkSlateBlue", "#483D8B"));
+        colors.add(new MyColor("靛色", "Indigo", "#4B0080"));
+        colors.add(new MyColor("紫色", "Purple", "#6A0DAD"));
+        colors.add(new MyColor("岩蓝", "SlateBlue", "#6A5ACD"));
+        colors.add(new MyColor("矢车菊蓝", "CornflowerBlue", "#6495ED"));
+        colors.add(new MyColor("中岩蓝", "MediumSlateBlue", "#7B68EE"));
+        colors.add(new MyColor("岩灰", "SlateGray", "#708090"));
+        colors.add(new MyColor("浅岩灰色", "LightSlateGray", "#778899"));
+        colors.add(new MyColor("堇紫色", "Violet", "#8000FF"));
+        colors.add(new MyColor("蓝紫", "BlueViolet", "#8A2BE2"));
+        colors.add(new MyColor("暗洋红", "DarkMagenta", "#8B008B"));
+        colors.add(new MyColor("梅红色", "Plum", "#8E4585"));
+        colors.add(new MyColor("天空蓝", "SkyBlue", "#87CEEB"));
+        colors.add(new MyColor("浅天蓝", "LightSkyBlue", "#87CEFA"));
+        colors.add(new MyColor("勃艮第酒红", "Burgundy", "#800020"));
+        colors.add(new MyColor("宗主教紫", "Patriarch", "#800080"));
+        colors.add(new MyColor("中紫", "MediumPurple", "#9370DB"));
+        colors.add(new MyColor("暗紫", "DarkViolet", "#9400D3"));
+        colors.add(new MyColor("暗兰紫", "DarkOrchid", "#9933CC"));
+        colors.add(new MyColor("紫水晶色", "Amethyst", "#9966CC"));
+        colors.add(new MyColor("中兰紫", "MediumOrchid", "#BA55D3"));
+        colors.add(new MyColor("薰衣草紫", "Lavender", "#B57EDC"));
+        colors.add(new MyColor("三色堇紫", "Pansy", "#7400A1"));
+        colors.add(new MyColor("锦葵紫", "Mallow", "#D94DFF"));
+        colors.add(new MyColor("优品紫红", "OperaMauve", "#B784A7"));
+        colors.add(new MyColor("淡紫丁香色", "PailLilac", "#E6CFE6"));
+        colors.add(new MyColor("矿紫", "MineralViolet", "#A39DAE"));
+        colors.add(new MyColor("浅紫色", "LightViolet", "#B09DB9"));
+        colors.add(new MyColor("紫丁香色", "Lilac", "#C8A2C8"));
+        colors.add(new MyColor("紫藤色", "Wisteria", "#C9A0DC"));
+        colors.add(new MyColor("梅红色", "MediumLavenderMagenta", "#DDA0DD"));
+        colors.add(new MyColor("薰衣草洋红色", "LavenderMagenta", "#EE82EE"));
+        colors.add(new MyColor("缬草紫", "Heliotrope", "#DF73FF"));
+        colors.add(new MyColor("木槿紫", "Mauve", "#E0B0FF"));
+        colors.add(new MyColor("蓟紫", "Thistle", "#D8BFD8"));
+        colors.add(new MyColor("铁线莲紫", "Clematis", "#CCA3CC"));
+        colors.add(new MyColor("洋红色、品红色", "Magenta、Fuchsia", "#FF00FF"));
+        colors.add(new MyColor("品红色", "Fuchsia", "#F400A1"));
+        colors.add(new MyColor("兰紫色", "Orchid", "#DA70D6"));
+        colors.add(new MyColor("浅珍珠红", "PearlPink", "#FFB3E6"));
+        colors.add(new MyColor("陈玫红", "OldRose", "#C08081"));
+        colors.add(new MyColor("浅玫瑰红", "RosePink", "#FF66CC"));
+        colors.add(new MyColor("中青紫红", "MediumVioletRed", "#C71585"));
+        colors.add(new MyColor("洋玫瑰红", "MagentaRose", "#FF0DA6"));
+        colors.add(new MyColor("玫瑰红", "Rose", "#FF007F"));
+        colors.add(new MyColor("红宝石色", "Ruby", "#CC0080"));
+        colors.add(new MyColor("山茶红", "Camellia", "#E63995"));
+        colors.add(new MyColor("深粉红", "DeepPink", "#FF1493"));
+        colors.add(new MyColor("火鹤红", "Flamingo", "#E68AB8"));
+        colors.add(new MyColor("浅珊瑚红", "CoralPink", "#FF80BF"));
+        colors.add(new MyColor("暖粉红", "HotPink", "#FF69B4"));
+        colors.add(new MyColor("尖晶石红", "SpinelRed", "#FF73B3"));
+        colors.add(new MyColor("胭脂红", "Carmine", "#E6005C"));
+        colors.add(new MyColor("浅粉红", "BabyPink", "#FFD9E6"));
+        colors.add(new MyColor("枢机红", "CardinalRed", "#C41E3A"));
+        colors.add(new MyColor("薰衣草紫红", "LavenderBlush", "#FFF0F5"));
+        colors.add(new MyColor("灰紫红", "PaleVioletRed", "#DB7093"));
+        colors.add(new MyColor("樱桃红", "Cerise", "#DE3163"));
+        colors.add(new MyColor("浅鲑红", "SalmonPink", "#FF8099"));
+        colors.add(new MyColor("绯红", "Crimson", "#DC143C"));
+        colors.add(new MyColor("粉红", "Pink", "#FFC0CB"));
+        colors.add(new MyColor("浅粉红", "LightPink", "#FFB6C1"));
+        colors.add(new MyColor("壳黄红", "ShellPink", "#FFB3BF"));
+        colors.add(new MyColor("茜红", "AlizarinCrimson", "#E32636"));
+
+
+        colors.add(new MyColor("", "", "#FFFFFF"));
+        colors.add(new MyColor("", "", "#FFFFFF"));
+        // Add more colors as needed
+        return colors;
+    }
+}

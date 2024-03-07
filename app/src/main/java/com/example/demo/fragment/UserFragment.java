@@ -44,7 +44,7 @@ public class UserFragment extends Fragment {
 //            //tabLayout.getTabAt(i).setIcon(tabIcons[i]);
 //            tabLayout.getTabAt(i).setText("666");
 //        }
-        tabLayout.getTabAt(0).setText("作品");
+        tabLayout.getTabAt(0).setText("兴趣");
         tabLayout.getTabAt(1).setText("赞过");
 
     }
