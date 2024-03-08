@@ -62,7 +62,7 @@
             android:text="Inception_v3模型特征提取:"
             android:textStyle="bold"
             android:textColor="@color/black"
-            android:textSize="16sp"/>
+            android:textSize="12sp"/>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -74,18 +74,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
+
                 >
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:orientation="horizontal"
                     android:background="@drawable/round"
-                    android:paddingStart="8dp"
-                    android:paddingEnd="8dp"
-                    android:paddingTop="4dp"
-                    android:paddingBottom="4dp"
-                    android:layout_margin="4dp"
-                    android:textSize="12sp"
+                    android:layout_marginRight="10dp"
                     android:gravity="center"
                     android:textStyle="bold">
                     <TextView
@@ -100,6 +97,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="5dp"
                         android:layout_gravity="center"
+                        android:textSize="12sp"
                         android:text="brass | 89.95%"
                         android:textColor="@color/black"
                         android:gravity="center"
@@ -111,13 +109,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
+                    android:layout_weight="1"
                     android:background="@drawable/round"
-                    android:paddingStart="8dp"
-                    android:paddingEnd="8dp"
-                    android:paddingTop="4dp"
-                    android:paddingBottom="4dp"
-                    android:layout_margin="4dp"
-                    android:textSize="12sp"
+                    android:layout_marginRight="10dp"
                     android:gravity="center"
                     android:textStyle="bold">
                     <TextView
@@ -134,49 +128,43 @@
                         android:layout_marginLeft="5dp"
                         android:layout_gravity="center"
                         android:text="menu | 00.78%"
+                        android:textSize="12sp"
                         android:textColor="@color/black"
                         android:gravity="center"
                         android:textStyle="bold"
                         />
 
                 </LinearLayout>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:background="@drawable/round"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp"
-                android:paddingTop="4dp"
-                android:paddingBottom="4dp"
-                android:layout_margin="4dp"
-                android:textSize="12sp"
-                android:gravity="center"
-                android:textStyle="bold">
-                <TextView
-                    android:layout_width="3dp"
-                    android:layout_height="3dp"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    android:background="@drawable/rounded_box_black" />
-
-                <TextView
-                    android:id="@+id/featuresTagTextView3"
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="5dp"
-                    android:layout_gravity="center"
-                    android:text="packet | 00.24%"
-                    android:textColor="@color/black"
+                    android:layout_weight="1"
+                    android:orientation="horizontal"
+                    android:background="@drawable/round"
                     android:gravity="center"
-                    android:textStyle="bold"
-                    />
+                    android:textStyle="bold">
+                    <TextView
+                        android:layout_width="3dp"
+                        android:layout_height="3dp"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:background="@drawable/rounded_box_black" />
 
+                    <TextView
+                        android:id="@+id/featuresTagTextView3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:layout_gravity="center"
+                        android:text="packet | 00.24%"
+                        android:textSize="12sp"
+                        android:textColor="@color/black"
+                        android:gravity="center"
+                        android:textStyle="bold"
+                        />
+
+                </LinearLayout>
             </LinearLayout>
-
 
         </LinearLayout>
         <TextView
@@ -187,7 +175,7 @@
             android:text="ResNet50模型特征提取:"
             android:textStyle="bold"
             android:textColor="@color/black"
-            android:textSize="16sp"/>
+            android:textSize="12sp"/>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -205,13 +193,9 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:background="@drawable/round"
-                    android:paddingStart="8dp"
-                    android:paddingEnd="8dp"
-                    android:paddingTop="4dp"
-                    android:paddingBottom="4dp"
-                    android:layout_margin="4dp"
-                    android:textSize="12sp"
+                    android:layout_weight="1"
                     android:gravity="center"
+                    android:layout_marginRight="10dp"
                     android:textStyle="bold">
                     <TextView
                         android:layout_width="3dp"
@@ -226,6 +210,7 @@
                         android:layout_marginLeft="5dp"
                         android:layout_gravity="center"
                         android:text="brass | 89.95%"
+                        android:textSize="12sp"
                         android:textColor="@color/black"
                         android:gravity="center"
                         android:textStyle="bold"
@@ -237,13 +222,9 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:background="@drawable/round"
-                    android:paddingStart="8dp"
-                    android:paddingEnd="8dp"
-                    android:paddingTop="4dp"
-                    android:paddingBottom="4dp"
-                    android:layout_margin="4dp"
-                    android:textSize="12sp"
+                    android:layout_weight="1"
                     android:gravity="center"
+                    android:layout_marginRight="10dp"
                     android:textStyle="bold">
                     <TextView
                         android:layout_width="3dp"
@@ -259,47 +240,43 @@
                         android:layout_marginLeft="5dp"
                         android:layout_gravity="center"
                         android:text="menu | 00.78%"
+                        android:textSize="12sp"
                         android:textColor="@color/black"
                         android:gravity="center"
                         android:textStyle="bold"
                         />
 
                 </LinearLayout>
-
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:background="@drawable/round"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp"
-                android:paddingTop="4dp"
-                android:paddingBottom="4dp"
-                android:layout_margin="4dp"
-                android:textSize="12sp"
-                android:gravity="center"
-                android:textStyle="bold">
-                <TextView
-                    android:layout_width="3dp"
-                    android:layout_height="3dp"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    android:background="@drawable/rounded_box_black" />
-
-                <TextView
-                    android:id="@+id/ResNetFeaturesTagTextView3"
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="5dp"
-                    android:layout_gravity="center"
-                    android:text="packet | 00.24%"
-                    android:textColor="@color/black"
+                    android:orientation="horizontal"
+                    android:background="@drawable/round"
+                    android:layout_weight="1"
                     android:gravity="center"
-                    android:textStyle="bold"
-                    />
+                    android:textStyle="bold">
+                    <TextView
+                        android:layout_width="3dp"
+                        android:layout_height="3dp"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:background="@drawable/rounded_box_black" />
 
+                    <TextView
+                        android:id="@+id/ResNetFeaturesTagTextView3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="5dp"
+                        android:gravity="center"
+                        android:text="packet | 00.24%"
+                        android:textSize="12sp"
+                        android:textColor="@color/black"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
             </LinearLayout>
+
 
 
         </LinearLayout>
@@ -312,7 +289,7 @@
             android:textStyle="bold"
             android:textColor="@color/black"
 
-            android:textSize="16sp"/>
+            android:textSize="12sp"/>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -328,14 +305,10 @@
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:orientation="horizontal"
                     android:background="@drawable/round"
-                    android:paddingStart="8dp"
-                    android:paddingEnd="8dp"
-                    android:paddingTop="4dp"
-                    android:paddingBottom="4dp"
-                    android:layout_margin="4dp"
-                    android:textSize="12sp"
+                    android:layout_marginRight="10dp"
                     android:gravity="center"
                     android:textStyle="bold">
                     <TextView
@@ -343,12 +316,13 @@
                         android:layout_height="3dp"
                         android:layout_gravity="center"
                         android:gravity="center"
+
                         android:background="@drawable/rounded_box_black" />
                     />
                     <TextView
                         android:id="@+id/colorTextView1"
-                        android:layout_width="13dp"
-                        android:layout_height="13dp"
+                        android:layout_width="10dp"
+                        android:layout_height="10dp"
                         android:layout_gravity="center"
                         android:gravity="center"
                         android:layout_marginLeft="5dp"
@@ -361,6 +335,7 @@
                         android:layout_marginLeft="5dp"
                         android:layout_gravity="center"
                         android:text="[68,73,77]"
+                        android:textSize="10sp"
                         android:textColor="@color/black"
                         android:gravity="center"
                         android:textStyle="bold"
@@ -372,13 +347,9 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:background="@drawable/round"
-                    android:paddingStart="8dp"
-                    android:paddingEnd="8dp"
-                    android:paddingTop="4dp"
-                    android:paddingBottom="4dp"
-                    android:layout_margin="4dp"
-                    android:textSize="12sp"
+                    android:layout_weight="1"
                     android:gravity="center"
+                    android:layout_marginRight="10dp"
                     android:textStyle="bold">
                     <TextView
                         android:layout_width="3dp"
@@ -389,8 +360,8 @@
                     />
                     <TextView
                         android:id="@+id/colorTextView2"
-                        android:layout_width="13dp"
-                        android:layout_height="13dp"
+                        android:layout_width="10dp"
+                        android:layout_height="10dp"
                         android:layout_gravity="center"
                         android:gravity="center"
                         android:layout_marginLeft="5dp"
@@ -403,59 +374,80 @@
                         android:layout_marginLeft="5dp"
                         android:layout_gravity="center"
                         android:text="[143,144,144]"
+                        android:textSize="10sp"
                         android:textColor="@color/black"
                         android:gravity="center"
                         android:textStyle="bold"
                         />
 
                 </LinearLayout>
-
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:background="@drawable/round"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp"
-                android:paddingTop="4dp"
-                android:paddingBottom="4dp"
-                android:layout_margin="4dp"
-                android:textSize="12sp"
-                android:gravity="center"
-                android:textStyle="bold">
-                <TextView
-                    android:layout_width="3dp"
-                    android:layout_height="3dp"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    android:background="@drawable/rounded_box_black" />
-                />
-                <TextView
-                    android:id="@+id/colorTextView3"
-                    android:layout_width="13dp"
-                    android:layout_height="13dp"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    android:layout_marginLeft="5dp"
-                    android:background="#e4edf5" />
-                />
-                <TextView
-                    android:id="@+id/tagTextView3"
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="5dp"
-                    android:layout_gravity="center"
-                    android:text="[228,237,245]"
-                    android:textColor="@color/black"
+                    android:layout_weight="1"
+                    android:orientation="horizontal"
+                    android:background="@drawable/round"
                     android:gravity="center"
-                    android:textStyle="bold"
+                    android:textStyle="bold">
+                    <TextView
+                        android:layout_width="3dp"
+                        android:layout_height="3dp"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:background="@drawable/rounded_box_black" />
                     />
+                    <TextView
+                        android:id="@+id/colorTextView3"
+                        android:layout_width="10dp"
+                        android:layout_height="10dp"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:layout_marginLeft="5dp"
+                        android:background="#e4edf5" />
+                    />
+                    <TextView
+                        android:id="@+id/tagTextView3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:layout_gravity="center"
+                        android:text="[228,237,245]"
+                        android:textSize="10sp"
+                        android:textColor="@color/black"
+                        android:gravity="center"
+                        android:textStyle="bold"
+                        />
 
+                </LinearLayout>
             </LinearLayout>
+
 
 
         </LinearLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:background="@color/background_gray"
+            android:layout_height="300dp"
+            android:layout_marginTop="30dp"
+            android:padding="30dp"
+            >
+<!--            <com.tencent.tencentmap.mapsdk.maps.TextureMapView-->
+<!--                android:id="@+id/mapView"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="match_parent"/>-->
+
+            <ImageButton
+                android:id="@+id/my_location_button"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:gravity="center"
+                android:background="@drawable/shape_button_test"
+                android:scaleType="centerInside"
+                android:src="@drawable/location" />
+
+        </RelativeLayout>
 
         <TextView
             android:layout_width="match_parent"

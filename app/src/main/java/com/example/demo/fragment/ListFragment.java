@@ -36,6 +36,7 @@ public class ListFragment extends Fragment {
     private List<Card> mCards;
 
     String jdbcUrl = "jdbc:mysql://bj-cynosdbmysql-grp-abgij5yo.sql.tencentcdb.com:29115/train";
+    //String jdbcUrl = "jdbc:mysql://rm-2ze740g8q9yaf3v06co.mysql.rds.aliyuncs.com:3296/mydesign";
     String user = "admin";
     String password = "Jzc123456";
     private boolean isLoading = false;

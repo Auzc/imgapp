@@ -15,10 +15,15 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.example.demo.BaseMapActivity;
 import com.example.demo.CardDetailActivity;
 import com.example.demo.R;
+import com.mysql.jdbc.Connection;
 
 
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.List;
 
 public class StaggeredGridAdapter extends RecyclerView.Adapter<StaggeredGridAdapter.ViewHolder> {
@@ -28,7 +33,11 @@ public class StaggeredGridAdapter extends RecyclerView.Adapter<StaggeredGridAdap
     private List<Card> cards;
     private Context context;
     private int space;
-
+    String jdbcUrl = "jdbc:mysql://rm-2ze740g8q9yaf3v06co.mysql.rds.aliyuncs.com:3296/mydesign";
+    String user = "admin";
+    String password = "Jzc123456";
+    String userId = "user123"; // 假设用户ID
+    String contentId = "content456"; // 假设内容ID
     public StaggeredGridAdapter(Context context, int space) {
         this.context = context;
         this.space = space;
@@ -56,7 +65,7 @@ public class StaggeredGridAdapter extends RecyclerView.Adapter<StaggeredGridAdap
                 @Override
                 public void onClick(View v) {
                     // 在这里处理点击事件，跳转到详情界面
-                    Intent intent = new Intent(context, CardDetailActivity.class);
+                    Intent intent = new Intent(context, BaseMapActivity.class);
                     // 在这里可以传递卡片的信息到详情界面
                     intent.putExtra("card_id", card.getId());
                     context.startActivity(intent);
@@ -117,12 +126,41 @@ public class StaggeredGridAdapter extends RecyclerView.Adapter<StaggeredGridAdap
 
                 // 检查当前的图片资源ID，根据不同的状态设置不同的图片
                 if (currentImageResource == R.drawable.love) {
-                    // 如果当前是喜欢状态，则切换为取消喜欢状态
+                    try {
+                        // 加载MySQL JDBC驱动程序
+                        Class.forName("com.mysql.cj.jdbc.Driver");
+
+                        // 建立数据库连接
+                        Connection connection = (Connection) DriverManager.getConnection(jdbcUrl, user, password);
+
+                        // SQL插入语句
+                        String sql = "INSERT INTO Like_Table (user_id, content_id) VALUES (?, ?)";
+
+                        // 创建PreparedStatement对象
+                        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+                        preparedStatement.setString(1, userId);
+                        preparedStatement.setString(2, contentId);
+
+                        // 执行插入操作
+                        int rowsInserted = preparedStatement.executeUpdate();
+                        if (rowsInserted > 0) {
+                            System.out.println("点赞数据插入成功！");
+                        }
+                        // 关闭PreparedStatement和Connection
+                        preparedStatement.close();
+                        connection.close();
+
+                    } catch (ClassNotFoundException e) {
+                        e.printStackTrace();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
                     holder.love.setImageResource(R.drawable.loved);
                     // 更新标签以便下次点击知道当前状态
                     holder.love.setTag(R.drawable.loved);
                 } else {
-                    // 如果当前是取消喜欢状态，则切换为喜欢状态
+
+
                     holder.love.setImageResource(R.drawable.love);
                     // 更新标签以便下次点击知道当前状态
                     holder.love.setTag(R.drawable.love);

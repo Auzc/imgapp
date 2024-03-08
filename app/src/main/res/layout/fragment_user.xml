@@ -52,13 +52,49 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:textSize="25sp"
+                    android:textSize="20sp"
                     android:textColor="@color/RosyBrown"
-                    android:layout_marginTop="5dp"
-                    android:text="USER"/>
+                    android:layout_marginTop="15dp"
+                    android:text="用户"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:textSize="15sp"
+                    android:textColor="@color/RosyBrown"
+                    android:layout_marginTop="10dp"
+                    android:text="ID:"/>
             </LinearLayout>
 
         </LinearLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="120dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:padding="5dp"
+                android:background="@drawable/border_shape2">
+
+                <TextView
+                    android:id="@+id/satellite1"
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="13sp"
+                    android:layout_gravity="center_vertical"
+                    android:textColor="@color/background_gray"
+                    android:text="  设置背景  "/>
+
+            </LinearLayout>
+        </RelativeLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="50dp"
@@ -131,6 +167,8 @@
                     android:textColor="@color/background_gray"
                     android:text="关注"/>
             </LinearLayout>
+
+
         </LinearLayout>
 
         <LinearLayout
@@ -151,7 +189,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_centerInParent="true"
-                    android:background="@drawable/rounded_box_gray" />
+                    android:background="@drawable/rounded_box_syscolor" />
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -206,7 +244,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_centerInParent="true"
-                    android:background="@drawable/rounded_box_gray" />
+                    android:background="@drawable/rounded_box_syscolor" />
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -260,7 +298,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_centerInParent="true"
-                    android:background="@drawable/rounded_box_gray" />
+                    android:background="@drawable/rounded_box_syscolor" />
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
