@@ -2,6 +2,7 @@ package com.example.demo.card;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,12 +15,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.demo.BaseMapActivity;
-import com.example.demo.CardDetailActivity;
 import com.example.demo.R;
 import com.mysql.jdbc.Connection;
-
 
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -34,10 +32,11 @@ public class StaggeredGridAdapter extends RecyclerView.Adapter<StaggeredGridAdap
     private Context context;
     private int space;
     String jdbcUrl = "jdbc:mysql://rm-2ze740g8q9yaf3v06co.mysql.rds.aliyuncs.com:3296/mydesign";
-    String user = "admin";
+    String user = "admin1";
     String password = "Jzc123456";
     String userId = "user123"; // 假设用户ID
     String contentId = "content456"; // 假设内容ID
+
     public StaggeredGridAdapter(Context context, int space) {
         this.context = context;
         this.space = space;
@@ -96,7 +95,6 @@ public class StaggeredGridAdapter extends RecyclerView.Adapter<StaggeredGridAdap
                 .placeholder(R.drawable.rounded_box)
                 .centerCrop()
                 .into(holder.image);
-        //Glide.with(context).load(card.getImg_url()).into(holder.image);
 
         holder.title.setText(card.getTitle());
 
@@ -110,14 +108,6 @@ public class StaggeredGridAdapter extends RecyclerView.Adapter<StaggeredGridAdap
         holder.love.setImageResource(R.drawable.love);
 
         holder.love.setTag(R.drawable.love); // 设置初始状态为喜欢
-        int currentImageResource = (Integer)holder.love.getTag();
-        if (currentImageResource == R.drawable.love) {
-            holder.love.setImageResource(R.drawable.love);
-            holder.love.setTag(R.drawable.love);
-        } else {
-            holder.love.setImageResource(R.drawable.loved);
-            holder.love.setTag(R.drawable.loved);
-        }
         holder.love.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -144,23 +134,32 @@ public class StaggeredGridAdapter extends RecyclerView.Adapter<StaggeredGridAdap
                         // 执行插入操作
                         int rowsInserted = preparedStatement.executeUpdate();
                         if (rowsInserted > 0) {
-                            System.out.println("点赞数据插入成功！");
+                            // 插入成功，显示成功的 Toast 消息
+                            Toast.makeText(context, "点赞成功！", Toast.LENGTH_SHORT).show();
+                        } else {
+                            // 插入失败，显示失败的 Toast 消息
+                            Toast.makeText(context, "点赞失败！", Toast.LENGTH_SHORT).show();
                         }
+
                         // 关闭PreparedStatement和Connection
                         preparedStatement.close();
                         connection.close();
 
                     } catch (ClassNotFoundException e) {
                         e.printStackTrace();
+                        Log.e("MySQL Exception", "ClassNotFoundException: " + e.getMessage());
+                        // 显示失败的 Toast 消息
+                        Toast.makeText(context, "数据库驱动程序未找到！", Toast.LENGTH_SHORT).show();
                     } catch (SQLException e) {
                         e.printStackTrace();
+                        Log.e("MySQL Exception", "SQLException: " + e.getMessage());
+                        // 显示失败的 Toast 消息
+                        Toast.makeText(context, "SQL操作失败！", Toast.LENGTH_SHORT).show();
                     }
                     holder.love.setImageResource(R.drawable.loved);
                     // 更新标签以便下次点击知道当前状态
                     holder.love.setTag(R.drawable.loved);
                 } else {
-
-
                     holder.love.setImageResource(R.drawable.love);
                     // 更新标签以便下次点击知道当前状态
                     holder.love.setTag(R.drawable.love);

@@ -32,6 +32,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.example.demo.R;
 import com.google.android.material.tabs.TabLayout;
+import com.google.gson.Gson;
 import com.tencent.map.geolocation.TencentLocation;
 import com.tencent.map.geolocation.TencentLocationListener;
 import com.tencent.map.geolocation.TencentLocationManager;
@@ -40,15 +41,20 @@ import com.tencent.map.sdk.comps.vis.VisualLayerOptions;
 import com.tencent.tencentmap.mapsdk.maps.CameraUpdateFactory;
 import com.tencent.tencentmap.mapsdk.maps.MapRenderLayer;
 import com.tencent.tencentmap.mapsdk.maps.MapView;
+import com.tencent.tencentmap.mapsdk.maps.Projection;
 import com.tencent.tencentmap.mapsdk.maps.TencentMap;
 import com.tencent.tencentmap.mapsdk.maps.TencentMapInitializer;
 import com.tencent.tencentmap.mapsdk.maps.TencentMapOptions;
 import com.tencent.tencentmap.mapsdk.maps.model.BitmapDescriptor;
 import com.tencent.tencentmap.mapsdk.maps.model.BitmapDescriptorFactory;
+import com.tencent.tencentmap.mapsdk.maps.model.CameraPosition;
 import com.tencent.tencentmap.mapsdk.maps.model.LatLng;
+import com.tencent.tencentmap.mapsdk.maps.model.LatLngBounds;
 import com.tencent.tencentmap.mapsdk.maps.model.Marker;
 import com.tencent.tencentmap.mapsdk.maps.model.MarkerOptions;
 import com.tencent.tencentmap.mapsdk.maps.model.OverlayLevel;
+import com.tencent.tencentmap.mapsdk.maps.model.TencentMapGestureListenerList;
+import com.tencent.tencentmap.mapsdk.maps.model.VisibleRegion;
 
 import org.w3c.dom.Text;
 
@@ -124,11 +130,16 @@ public class MapFragment extends Fragment {
                 // 发起单次定位请求
                 mLocationManager.requestSingleFreshLocation(null, locationListener, Looper.getMainLooper());
 
-
+// 获取当前屏幕地图的视野范围
+                Projection projection = tencentMap.getProjection();
+                VisibleRegion region = projection.getVisibleRegion();
+                Toast.makeText(getActivity(), ("当前地图的视野范围：" + new Gson().toJson(region)), Toast.LENGTH_LONG).show();
             }
         });
         TextView satellite1 = view.findViewById(R.id.satellite1);
         satellite = view.findViewById(R.id.satellite);
+        tencentMap.setBuilding3dEffectEnable(true);
+
         satellite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -202,12 +213,49 @@ public class MapFragment extends Fragment {
                 Log.i("TAG","当InfoWindow点击时，点击点的回调");
             }
         });
+        tencentMap.setOnCameraChangeListener(new TencentMap.OnCameraChangeListener() {
+            @Override
+            public void onCameraChange(CameraPosition cameraPosition) {
+                // 当地图视野变化时触发
+            }
 
+            @Override
+            public void onCameraChangeFinished(CameraPosition cameraPosition) {
+                // 当地图视野变化完成时触发
+                checkVisibleRegionSize();
+            }
+        });
 
 
         return view;
 
 
+    }
+
+    private void checkVisibleRegionSize() {
+        Projection projection = tencentMap.getProjection();
+        VisibleRegion region = projection.getVisibleRegion();
+
+        // 计算地图视野范围的面积，你可以根据自己的需求定义“小于某个数量级”的条件
+        double visibleRegionArea = calculateVisibleRegionArea(region);
+
+        // 设置你定义的阈值
+        double threshold = 10; // 举例阈值为1000
+
+        if (visibleRegionArea < threshold) {
+            // 当地图视野范围小于阈值时，显示 Toast 消息
+            Toast.makeText(getActivity(), new Gson().toJson(region), Toast.LENGTH_LONG).show();
+
+        }
+    }
+
+    private double calculateVisibleRegionArea(VisibleRegion region) {
+        // 这里是一个简单的计算地图视野范围面积的示例，你可以根据需要实现更复杂的计算方法
+        // 假设地图视野范围是一个矩形，可以使用矩形面积公式进行计算
+        LatLngBounds bounds = region.latLngBounds;
+        double width = Math.abs(bounds.northeast.longitude - bounds.southwest.longitude);
+        double height = Math.abs(bounds.northeast.latitude - bounds.southwest.latitude);
+        return width * height;
     }
 
 

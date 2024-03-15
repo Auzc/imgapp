@@ -18,6 +18,7 @@ import com.example.demo.R;
 import com.example.demo.card.Card;
 import com.example.demo.card.StaggeredGridAdapter;
 
+//import java.sql.Connection;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
