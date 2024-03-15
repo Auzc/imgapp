@@ -2,6 +2,7 @@ package com.example.demo.card;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,12 +17,17 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.demo.BaseMapActivity;
+import com.example.demo.CardDetailActivity;
 import com.example.demo.R;
-import com.mysql.jdbc.Connection;
+import com.example.demo.SQLTestActivity;
+import com.example.demo.sqlHelper.DbOpenHelper;
 
+
+import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+
 import java.util.List;
 
 public class StaggeredGridAdapter extends RecyclerView.Adapter<StaggeredGridAdapter.ViewHolder> {
@@ -31,17 +37,20 @@ public class StaggeredGridAdapter extends RecyclerView.Adapter<StaggeredGridAdap
     private List<Card> cards;
     private Context context;
     private int space;
-    String jdbcUrl = "jdbc:mysql://rm-2ze740g8q9yaf3v06co.mysql.rds.aliyuncs.com:3296/mydesign";
-    String user = "admin1";
-    String password = "Jzc123456";
-    String userId = "user123"; // 假设用户ID
-    String contentId = "content456"; // 假设内容ID
+    private String jdbcUrl = "jdbc:mysql://rm-2ze740g8q9yaf3v06co.mysql.rds.aliyuncs.com:3296/mydesign";
+    private String user = "admin1";
+    private String password = "Jzc123456";
+    private String userId = "user123";
+    private String contentId = "content456";
 
     public StaggeredGridAdapter(Context context, int space) {
         this.context = context;
         this.space = space;
     }
-
+//    public StaggeredGridAdapter(List<Card> cards) {
+//        this.cards = cards;
+//        notifyDataSetChanged();
+//    }
     public void setCards(List<Card> cards) {
         this.cards = cards;
         notifyDataSetChanged();
@@ -64,7 +73,7 @@ public class StaggeredGridAdapter extends RecyclerView.Adapter<StaggeredGridAdap
                 @Override
                 public void onClick(View v) {
                     // 在这里处理点击事件，跳转到详情界面
-                    Intent intent = new Intent(context, BaseMapActivity.class);
+                    Intent intent = new Intent(context, CardDetailActivity.class);
                     // 在这里可以传递卡片的信息到详情界面
                     intent.putExtra("card_id", card.getId());
                     context.startActivity(intent);
@@ -77,7 +86,6 @@ public class StaggeredGridAdapter extends RecyclerView.Adapter<StaggeredGridAdap
         LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) holder.image.getLayoutParams();
         float itemWidth = (ScreenUtil.getScreenWidth(context) - space) / 2;
         layoutParams.width = (int) itemWidth;
-
         float width = card.getWidth();
         float height = card.getHeight();
         float scale = height / width;
@@ -108,54 +116,18 @@ public class StaggeredGridAdapter extends RecyclerView.Adapter<StaggeredGridAdap
         holder.love.setImageResource(R.drawable.love);
 
         holder.love.setTag(R.drawable.love); // 设置初始状态为喜欢
+
         holder.love.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // 获取当前的图片资源ID
-                int currentImageResource = (Integer)holder.love.getTag();
-
+                int currentImageResource = (Integer) holder.love.getTag();
                 // 检查当前的图片资源ID，根据不同的状态设置不同的图片
                 if (currentImageResource == R.drawable.love) {
-                    try {
-                        // 加载MySQL JDBC驱动程序
-                        Class.forName("com.mysql.cj.jdbc.Driver");
 
-                        // 建立数据库连接
-                        Connection connection = (Connection) DriverManager.getConnection(jdbcUrl, user, password);
-
-                        // SQL插入语句
-                        String sql = "INSERT INTO Like_Table (user_id, content_id) VALUES (?, ?)";
-
-                        // 创建PreparedStatement对象
-                        PreparedStatement preparedStatement = connection.prepareStatement(sql);
-                        preparedStatement.setString(1, userId);
-                        preparedStatement.setString(2, contentId);
-
-                        // 执行插入操作
-                        int rowsInserted = preparedStatement.executeUpdate();
-                        if (rowsInserted > 0) {
-                            // 插入成功，显示成功的 Toast 消息
-                            Toast.makeText(context, "点赞成功！", Toast.LENGTH_SHORT).show();
-                        } else {
-                            // 插入失败，显示失败的 Toast 消息
-                            Toast.makeText(context, "点赞失败！", Toast.LENGTH_SHORT).show();
-                        }
-
-                        // 关闭PreparedStatement和Connection
-                        preparedStatement.close();
-                        connection.close();
-
-                    } catch (ClassNotFoundException e) {
-                        e.printStackTrace();
-                        Log.e("MySQL Exception", "ClassNotFoundException: " + e.getMessage());
-                        // 显示失败的 Toast 消息
-                        Toast.makeText(context, "数据库驱动程序未找到！", Toast.LENGTH_SHORT).show();
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                        Log.e("MySQL Exception", "SQLException: " + e.getMessage());
-                        // 显示失败的 Toast 消息
-                        Toast.makeText(context, "SQL操作失败！", Toast.LENGTH_SHORT).show();
-                    }
+//                // 在这里调用 AsyncTask 来执行数据库操作
+                    new LikeAsyncTask(card.getId()).execute();
+                    //insert(userId,contentId);
                     holder.love.setImageResource(R.drawable.loved);
                     // 更新标签以便下次点击知道当前状态
                     holder.love.setTag(R.drawable.loved);
@@ -164,10 +136,51 @@ public class StaggeredGridAdapter extends RecyclerView.Adapter<StaggeredGridAdap
                     // 更新标签以便下次点击知道当前状态
                     holder.love.setTag(R.drawable.love);
                 }
+
             }
         });
 
+
+
+
     }
+    private class LikeAsyncTask extends AsyncTask<String, Void, Boolean> {
+
+        private String contentId;
+
+        public LikeAsyncTask(String contentId) {
+            this.contentId = contentId;
+        }
+
+        @Override
+        protected Boolean doInBackground(String... voids) {
+            try (Connection connection = DriverManager.getConnection(jdbcUrl, user, password)) {
+                String sql = "INSERT INTO Like_Table (user_id, content_id) VALUES (?, ?)";
+                try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+                    preparedStatement.setString(1, userId);
+                    preparedStatement.setString(2, contentId); // 使用传入的 contentId
+                    // 执行插入操作
+                    int rowsInserted = preparedStatement.executeUpdate();
+                    return rowsInserted > 0;
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return false;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Boolean success) {
+            if (success) {
+                // 插入成功，显示成功的 Toast 消息
+                //Toast.makeText(context, "点赞成功！", Toast.LENGTH_SHORT).show();
+            } else {
+                // 插入失败，显示失败的 Toast 消息
+                Toast.makeText(context, "点赞失败", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
 
     @Override
     public int getItemCount() {
@@ -184,6 +197,34 @@ public class StaggeredGridAdapter extends RecyclerView.Adapter<StaggeredGridAdap
             title = itemView.findViewById(R.id.card_title);
             love = itemView.findViewById(R.id.card_love);
             author = itemView.findViewById(R.id.card_author);
+        }
+    }
+
+    public static void insert(String user_id, String content_id) {
+        // 插入数据的 sql 语句
+        String sql = "INSERT INTO Like_Table (user_id, content_id) VALUES (?, ?)";
+        Connection connection = DbOpenHelper.getConnection();
+        PreparedStatement ps = null;
+        if (connection == null) {
+            return;
+        }
+        try {
+            ps = connection.prepareStatement(sql);
+            // 为两个 ? 设置具体的值
+            ps.setString(1, user_id);
+            ps.setString(2, content_id);
+            // 执行语句
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 }

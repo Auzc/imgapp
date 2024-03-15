@@ -27,6 +27,7 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
         sourceCompatibility 1.8
         targetCompatibility 1.8
+
     }
 }
 
@@ -43,6 +44,7 @@ dependencies {
     implementation files('libs/tencent-mapsdk-android-official-release.5.4.1.facf3901.jar')
     implementation files('libs/TencentLocationSDK-v7.5.0-r4c7567e1-20230221202658-release.jar')
     implementation 'com.google.code.gson:gson:2.8.8'
+
 
     annotationProcessor 'com.github.bumptech.glide:compiler:4.12.0'
 

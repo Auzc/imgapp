@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Stack;
 
-public class ListFragment extends Fragment {
+public class LikeFragment extends Fragment {
 
     private List<Card> mylist = new ArrayList<>();
 
@@ -49,7 +49,7 @@ public class ListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_like, container, false);
         mRecyclerView = view.findViewById(R.id.recyclerView);
         swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
 
@@ -66,13 +66,13 @@ public class ListFragment extends Fragment {
             @Override
             public void onRefresh() {
                 // 将 AsyncTask 的执行移到这里
-                new ListFragment.InfoAsyncTask().execute();
+                new LikeFragment.InfoAsyncTask().execute();
             }
         });
 
         // 只有在堆栈为空时才执行 AsyncTask
         if (cardStack.isEmpty()) {
-            new ListFragment.InfoAsyncTask().execute();
+            new LikeFragment.InfoAsyncTask().execute();
         }
 
         return view;
@@ -80,63 +80,73 @@ public class ListFragment extends Fragment {
 
     public List<Card> getData(int offset, int limit) {
         List<Card> dataInfoList = new ArrayList<>();
-
         try (Connection connection = DriverManager.getConnection(url, user, password)) {
-            String sql = "SELECT * FROM Images LIMIT ? OFFSET ?";
-            PreparedStatement statement = connection.prepareStatement(sql);
-            statement.setInt(1, limit);
-            statement.setInt(2, offset);
-            ResultSet resultSet = statement.executeQuery();
-            while (resultSet.next()) {
-                String id = resultSet.getString("id");
-                String url = resultSet.getString("url");
-                String landmarkId = resultSet.getString("landmark_id");
-                int width = resultSet.getInt("width");
-                int height = resultSet.getInt("height");
-                String author = resultSet.getString("author");
-                String title = resultSet.getString("title");
-                if (title.length() > 5) {
-                    title = title.substring(5);
-                }
-                if (title.length() > 4) {
-                    title = title.substring(0, title.length() - 4);
-                }
-                System.out.println("ID: " + id + ", URL: " + url + ", Landmark ID: " + landmarkId + ", Width: " + width + ", Height: " + height + ", Author: " + author + ", Title: " + title);
+            PreparedStatement likeStatement = connection.prepareStatement("SELECT content_id FROM like_table WHERE user_id = ?");
+            likeStatement.setString(1, "user123");
+            ResultSet likeResultSet = likeStatement.executeQuery();
 
-                Card sizeInfo = new Card(title,author,id,url,width,height);
-                dataInfoList.add(sizeInfo);
+            // 存储content_id的集合
+            List<String> contentIds = new ArrayList<>();
+            while (likeResultSet.next()) {
+                String contentId = likeResultSet.getString("content_id");
+                contentIds.add(contentId);
             }
-        } catch (Exception e) {
+
+            // 在Images表中根据content_id查询数据
+            for (String contentId : contentIds) {
+                PreparedStatement statement = connection.prepareStatement("SELECT * FROM Images WHERE id = ?");
+                statement.setString(1, contentId);
+                ResultSet resultSet = statement.executeQuery();
+                while (resultSet.next()) {
+                    String id = resultSet.getString("id");
+                    String url = resultSet.getString("url");
+                    String landmarkId = resultSet.getString("landmark_id");
+                    int width = resultSet.getInt("width");
+                    int height = resultSet.getInt("height");
+                    String author = resultSet.getString("author");
+                    String title = resultSet.getString("title");
+                    if (title.length() > 5) {
+                        title = title.substring(5);
+                    }
+                    if (title.length() > 4) {
+                        title = title.substring(0, title.length() - 4);
+                    }
+
+                    Card sizeInfo = new Card(title, author, id, url, width, height);
+                    dataInfoList.add(sizeInfo);
+                }
+            }
+        }catch (Exception e) {
             Log.e("getData", "Error getData", e);
         }
         return dataInfoList;
-    }
+}
 
-    @SuppressLint("StaticFieldLeak")
-    public class InfoAsyncTask extends AsyncTask<Void, Void, List<Card>> {
+@SuppressLint("StaticFieldLeak")
+public class InfoAsyncTask extends AsyncTask<Void, Void, List<Card>> {
 
-        @Override
-        protected List<Card> doInBackground(Void... voids) {
-            List<Card> stackItems = new ArrayList<>();
-            if (cardStack.isEmpty()) {
-                cardStack.addAll(getData(currentOffset, 10));
-                currentOffset += 10; // Update the offset for the next query
-            }
-            int itemsToLoad = Math.min(10, cardStack.size());
-            for (int i = 0; i < itemsToLoad; i++) {
-                stackItems.add(cardStack.pop());
-            }
-
-            return stackItems;
+    @Override
+    protected List<Card> doInBackground(Void... voids) {
+        List<Card> stackItems = new ArrayList<>();
+        if (cardStack.isEmpty()) {
+            cardStack.addAll(getData(currentOffset, 10));
+            currentOffset += 10; // Update the offset for the next query
+        }
+        int itemsToLoad = Math.min(10, cardStack.size());
+        for (int i = 0; i < itemsToLoad; i++) {
+            stackItems.add(cardStack.pop());
         }
 
-        @Override
-        protected void onPostExecute(List<Card> stackItems) {
-            updateDataAndRefresh(stackItems);
-            isLoading = false;
-            swipeRefreshLayout.setRefreshing(false);
-        }
+        return stackItems;
     }
+
+    @Override
+    protected void onPostExecute(List<Card> stackItems) {
+        updateDataAndRefresh(stackItems);
+        isLoading = false;
+        swipeRefreshLayout.setRefreshing(false);
+    }
+}
 
 
 
@@ -191,7 +201,7 @@ public class ListFragment extends Fragment {
                 if (!isLoading && lastVisibleItem == mCards.size() - 1 && !swipeRefreshLayout.isRefreshing()) {
                     // Start loading more data
                     isLoading = true;
-                    new ListFragment.InfoAsyncTask().execute();
+                    new LikeFragment.InfoAsyncTask().execute();
                 }
             }
         });

@@ -1,9 +1,14 @@
 package com.example.demo;
 
-import android.content.Intent;
 import android.os.Bundle;
+
 import android.view.View;
-import android.widget.ImageButton;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -11,19 +16,18 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
-import com.mysql.jdbc.Connection;
 
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
+
+
 
 public class CardDetailActivity extends AppCompatActivity {
     ImageView back_btn;
-    private Connection connection;
-    private String jdbcUrl = "jdbc:mysql://bj-cynosdbmysql-grp-abgij5yo.sql.tencentcdb.com:29115/train";
-    private String user = "admin";
-    private String password = "Jzc123456";
+
+    private static String url = "jdbc:mysql://rm-2ze740g8q9yaf3v06co.mysql.rds.aliyuncs.com:3296/mydesign"
+            + "?useUnicode=true&characterEncoding=utf8";    // mysql 数据库连接 url
+    private static String user = "au";    // 用户名
+    private static String password = "Jzc4211315"; // 密码
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,8 +35,9 @@ public class CardDetailActivity extends AppCompatActivity {
 
         // 获取传递的卡片ID
         String cardId = getIntent().getStringExtra("card_id");
+        loadCardDetailFromDatabase(cardId);
         if (!cardId.equals("")) {
-            loadCardDetailFromDatabase(cardId);
+
         }
         Toast.makeText(CardDetailActivity.this, cardId, Toast.LENGTH_SHORT).show();
         back_btn = findViewById(R.id.back_btn);
@@ -45,34 +50,38 @@ public class CardDetailActivity extends AppCompatActivity {
 
     }
     private void loadCardDetailFromDatabase(String cardId) {
-        try {
-            // 连接到数据库
-            connection = (Connection) DriverManager.getConnection(jdbcUrl, user, password);
+
+        try (Connection connection = DriverManager.getConnection(url, user, password)) {
 
             // 准备 SQL 查询语句
-            String sql = "SELECT width, height, url_x, author, title FROM myData WHERE id = ?";
-            PreparedStatement statement = connection.prepareStatement(sql);
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM Images WHERE id = ?");
             statement.setString(1, cardId);
-
-            // 执行查询
             ResultSet resultSet = statement.executeQuery();
 
-            // 更新 UI
             if (resultSet.next()) {
+
+                String id = resultSet.getString("id");
+                String url = resultSet.getString("url");
+                String landmarkId = resultSet.getString("landmark_id");
                 int width = resultSet.getInt("width");
                 int height = resultSet.getInt("height");
-                String url = resultSet.getString("url_x");
                 String author = resultSet.getString("author");
                 String title = resultSet.getString("title");
-                Toast.makeText(CardDetailActivity.this, author, Toast.LENGTH_SHORT).show();
+                if (title.length() > 5) {
+                    title = title.substring(5);
+                }
+                if (title.length() > 4) {
+                    title = title.substring(0, title.length() - 4);
+                }
+
+                Toast.makeText(this, "ID: " + id + ", URL: " + url + ", Landmark ID: " + landmarkId + ", Width: " + width + ", Height: " + height + ", Author: " + author + ", Title: " + title, Toast.LENGTH_SHORT).show();
                 updateUI(width, height, url, author, title);
             }
 
-            // 关闭连接
-            resultSet.close();
-            statement.close();
-            connection.close();
+
         } catch (SQLException e) {
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+
             e.printStackTrace();
         }
     }

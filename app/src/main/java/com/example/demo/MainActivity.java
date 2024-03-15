@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
         }
         setContentView(R.layout.activity_main);
 
+
         // 初始化底部导航栏和Fragment
         bottomNavigationView = findViewById(R.id.bottom_navigation);
 //        homeFragment = new HomeFragment();

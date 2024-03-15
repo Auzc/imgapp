@@ -75,6 +75,9 @@
 
         <activity android:name="com.example.demo.CardDetailActivity" />
         <activity android:name="com.example.demo.BaseMapActivity" />
+
+
+        <activity android:name="com.example.demo.SQLTestActivity" />
     </application>
 
 </manifest>
