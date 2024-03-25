@@ -1,38 +1,32 @@
-package com.example.demo.fragment;
+package com.example.demo.activity;
 
-import android.Manifest;
-import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
+
+import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.text.DecimalFormat;
+
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.StaggeredGridLayoutManager;
-import androidx.viewpager.widget.ViewPager;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.example.demo.R;
-import com.example.demo.activity.CardDetailActivity;
-import com.example.demo.activity.SQLTestActivity;
 import com.example.demo.data.Card;
 import com.example.demo.data.ImageData;
 import com.example.demo.data.Landmark;
-import com.google.android.material.tabs.TabLayout;
-import com.tencent.map.geolocation.TencentLocation;
 import com.tencent.map.geolocation.TencentLocationManager;
 import com.tencent.map.sdk.comps.vis.VisualLayer;
 import com.tencent.map.sdk.comps.vis.VisualLayerOptions;
@@ -45,70 +39,79 @@ import com.tencent.tencentmap.mapsdk.maps.model.Marker;
 import com.tencent.tencentmap.mapsdk.maps.model.MarkerOptions;
 import com.tencent.tencentmap.mapsdk.maps.model.OverlayLevel;
 
-import java.math.BigDecimal;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.Stack;
 
-public class RecommendFragment extends Fragment {
-    private ImageView search_btn;
+public class CardDetailActivity extends AppCompatActivity {
+    ImageView back_btn;
     private static String driver = "com.mysql.cj.jdbc.Driver";
     private static String url = "jdbc:mysql://rm-2ze740g8q9yaf3v06co.mysql.rds.aliyuncs.com:3296/mydesign"
             + "?useUnicode=true&characterEncoding=utf8";    // mysql 数据库连接 url
     private static String user = "au";    // 用户名
     private static String password = "Jzc4211315"; // 密码
-    private ImageView img;
-    private TextView card_author,title,featuresTagTextView1,featuresTagTextView2,featuresTagTextView3,ResNetFeaturesTagTextView1,ResNetFeaturesTagTextView2,ResNetFeaturesTagTextView3,tagTextView1,tagTextView2,tagTextView3,colorTextView1,colorTextView2,colorTextView3;
-    private static List<Card> mylist = new ArrayList<>();
+    private  Card card;
+    private String cardId;
+    private ImageView imageView,wiji;
+    private TextView  card_author,title,featuresTagTextView1,featuresTagTextView2,featuresTagTextView3,ResNetFeaturesTagTextView1,ResNetFeaturesTagTextView2,ResNetFeaturesTagTextView3,tagTextView1,tagTextView2,tagTextView3,colorTextView1,colorTextView2,colorTextView3;
     private TextView location;
-
-    private Stack<Card> cardStack = new Stack<>();
-    private int currentOffset = new Random().nextInt(2000);
-    DecimalFormat decimalFormat = new DecimalFormat("0.00%");
     private ImageData imageData;
-    private String cardId,landmarkid;
+
+    MapView mapView;
+    TencentMap tencentMap;
     private Landmark landmark;
-    private MapView mapView;
-    private TencentMap tencentMap;
-    private TencentLocationManager mLocationManager;
-
-    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
-
-    public  static TencentLocation mylocation = null;
+    DecimalFormat decimalFormat = new DecimalFormat("0.00%");
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_recommend, container, false);
-        location = view.findViewById(R.id.location);
-        // Features Tag TextViews
-        featuresTagTextView1 = view.findViewById(R.id.featuresTagTextView1);
-        featuresTagTextView2 = view.findViewById(R.id.featuresTagTextView2);
-        featuresTagTextView3 = view.findViewById(R.id.featuresTagTextView3);
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_card_detail);
+        imageView = findViewById(R.id.imageView);
+        card_author = findViewById(R.id.card_author);
+        title = findViewById(R.id.title);
+        location = findViewById(R.id.location);
+// Features Tag TextViews
+        featuresTagTextView1 = findViewById(R.id.featuresTagTextView1);
+        featuresTagTextView2 = findViewById(R.id.featuresTagTextView2);
+        featuresTagTextView3 = findViewById(R.id.featuresTagTextView3);
 
 // ResNet Features Tag TextViews
-        ResNetFeaturesTagTextView1 = view.findViewById(R.id.ResNetFeaturesTagTextView1);
-        ResNetFeaturesTagTextView2 = view.findViewById(R.id.ResNetFeaturesTagTextView2);
-        ResNetFeaturesTagTextView3 = view.findViewById(R.id.ResNetFeaturesTagTextView3);
+        ResNetFeaturesTagTextView1 = findViewById(R.id.ResNetFeaturesTagTextView1);
+        ResNetFeaturesTagTextView2 = findViewById(R.id.ResNetFeaturesTagTextView2);
+        ResNetFeaturesTagTextView3 = findViewById(R.id.ResNetFeaturesTagTextView3);
 
 // Tag TextViews
-        tagTextView1 = view.findViewById(R.id.tagTextView1);
-        tagTextView2 = view.findViewById(R.id.tagTextView2);
-        tagTextView3 = view.findViewById(R.id.tagTextView3);
+        tagTextView1 = findViewById(R.id.tagTextView1);
+        tagTextView2 = findViewById(R.id.tagTextView2);
+        tagTextView3 = findViewById(R.id.tagTextView3);
 
 // Color TextViews
-        colorTextView1 = view.findViewById(R.id.colorTextView1);
-        colorTextView2 = view.findViewById(R.id.colorTextView2);
-        colorTextView3 = view.findViewById(R.id.colorTextView3);
-        search_btn = view.findViewById(R.id.search_btn);
-
-        TextView satellite1 = view.findViewById(R.id.satellite1);
-        ImageButton satellite = view.findViewById(R.id.satellite);
+        colorTextView1 = findViewById(R.id.colorTextView1);
+        colorTextView2 = findViewById(R.id.colorTextView2);
+        colorTextView3 = findViewById(R.id.colorTextView3);
+        // 获取传递的卡片ID
+        //cardId = getIntent().getStringExtra("card_id");
+        card = getIntent().getParcelableExtra("card");
+        if(card!=null){
+            updateUI2(card);
+            cardId = card.getId();
+            DatabaseTask databaseTask = new DatabaseTask();
+            databaseTask.execute();
+            DatabaseTask2 databaseTask2 = new DatabaseTask2();
+            databaseTask2.execute();
+            DatabaseTask3 databaseTask3 = new DatabaseTask3();
+            databaseTask3.execute();
+        }
+        TencentMapInitializer.setAgreePrivacy(true);
+        TencentLocationManager.setUserAgreePrivacy(true);
+        mapView = findViewById(R.id.mapView);
+        tencentMap = mapView.getMap();
+        tencentMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(34.7952, 114.3076), 1));
+        VisualLayer mVisualLayer = tencentMap.addVisualLayer(new VisualLayerOptions("03097e5d0ff8") //xxxxxxxx为官网配置生成对应图层的图层id
+                .newBuilder()
+                .setAlpha(1)
+                .setLevel(OverlayLevel.OverlayLevelAboveBuildings)
+                .setZIndex(10)
+                .setTimeInterval(15)
+                .build());
+        TextView satellite1 = findViewById(R.id.satellite1);
+        ImageButton satellite = findViewById(R.id.satellite);
         satellite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -134,105 +137,92 @@ public class RecommendFragment extends Fragment {
                 }
             }
         });
-        search_btn.setOnClickListener(new View.OnClickListener() {
+
+        wiji=findViewById(R.id.wiji);
+        wiji.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent();
-                intent.setClass(getActivity(), SQLTestActivity.class);
+                Intent intent = new Intent(CardDetailActivity.this, MyWebViewActivity.class);
+                // 在这里可以传递卡片的信息到详情界面
+
+                intent.putExtra("url", landmark.getCategory());
                 startActivity(intent);
             }
         });
 
-        if (mylist.isEmpty()) {
-            new RecommendFragment.InfoAsyncTask().execute();
-        }
-        img = view.findViewById(R.id.img);
 
+        //Toast.makeText(this, card.getImg_url(), Toast.LENGTH_SHORT).show();
+//        if (!cardId.equals("")) {
+//            new DatabaseTask().execute();
+//        }
+//        ViewPager viewPager = findViewById(R.id.viewPager);
+//        List<String> imageUrls = new ArrayList<>();
+//        imageUrls.add(card.getImg_url());
+//// 添加更多图片 URL
+//        ImagePagerAdapter adapter = new ImagePagerAdapter(this, imageUrls);
+//        viewPager.setAdapter(adapter);
 
-
-        TencentMapInitializer.setAgreePrivacy(true);
-        TencentLocationManager.setUserAgreePrivacy(true);
-        mapView = view.findViewById(R.id.mapView);
-        tencentMap = mapView.getMap();
-        VisualLayer mVisualLayer = tencentMap.addVisualLayer(new VisualLayerOptions("03097e5d0ff8") //xxxxxxxx为官网配置生成对应图层的图层id
-                .newBuilder()
-                .setAlpha(1)
-                .setLevel(OverlayLevel.OverlayLevelAboveBuildings)
-                .setZIndex(10)
-                .setTimeInterval(15)
-                .build());
-
-
-
-
-        return view;
-    }
-
-    public List<Card> getData(int offset, int limit) {
-        List<Card> dataInfoList = new ArrayList<>();
-
-        try (Connection connection = DriverManager.getConnection(url, user, password)) {
-            String sql = "SELECT * FROM Images LIMIT ? OFFSET ?";
-            PreparedStatement statement = connection.prepareStatement(sql);
-            statement.setInt(1, limit);
-            statement.setInt(2, offset);
-            ResultSet resultSet = statement.executeQuery();
-            while (resultSet.next()) {
-                String id = resultSet.getString("id");
-                String url = resultSet.getString("url");
-                String landmarkId = resultSet.getString("landmark_id");
-                int width = resultSet.getInt("width");
-                int height = resultSet.getInt("height");
-                String author = resultSet.getString("author");
-                String title = resultSet.getString("title");
-                if (title.length() > 5) {
-                    title = title.substring(5);
-                }
-                if (title.length() > 4) {
-                    title = title.substring(0, title.length() - 4);
-                }
-                System.out.println("ID: " + id + ", URL: " + url + ", Landmark ID: " + landmarkId + ", Width: " + width + ", Height: " + height + ", Author: " + author + ", Title: " + title);
-
-                Card sizeInfo = new Card(title,author,id,url,width,height,landmarkId);
-                dataInfoList.add(sizeInfo);
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(CardDetailActivity.this, ImagesActivity.class);
+                // 在这里可以传递卡片的信息到详情界面
+                //intent.putExtra("card_id", card.getId());
+                intent.putExtra("card", card);
+                startActivity(intent);
             }
-        } catch (Exception e) {
-            Log.e("getData", "Error getData", e);
-        }
-        return dataInfoList;
+        });
+        back_btn = findViewById(R.id.back_btn);
+        back_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
     }
-    @SuppressLint("StaticFieldLeak")
-    public class InfoAsyncTask extends AsyncTask<Void, Void, List<Card>> {
+
+    // 创建 AsyncTask 来执行数据库操作
+    private class DatabaseTask extends AsyncTask<Void, Void, Void> {
         @Override
-        protected List<Card> doInBackground(Void... voids) {
-            mylist.addAll(getData(currentOffset, 10));
-            currentOffset += 10; // Update the offset for the next query
+        protected Void doInBackground(Void... voids) {
+            try (Connection connection1 = DriverManager.getConnection(url, user, password)) {
+                PreparedStatement statement = connection1.prepareStatement("SELECT * FROM Images WHERE id = ?");
+                statement.setString(1, cardId);
+                ResultSet resultSet = statement.executeQuery();
 
+                while (resultSet.next()) {
+                    String id = resultSet.getString("id");
+                    String imgurl = resultSet.getString("url");
+                    String landmarkId = resultSet.getString("landmark_id");
+                    int width = resultSet.getInt("width");
+                    int height = resultSet.getInt("height");
+                    String author = resultSet.getString("author");
+                    String title = resultSet.getString("title");
+                    if (title.length() > 5) {
+                        title = title.substring(5);
+                    }
+                    if (title.length() > 4) {
+                        title = title.substring(0, title.length() - 4);
+                    }
+                    card = new Card(title,author,id,imgurl,width,height,landmarkId);
 
+                }
+            } catch (Exception e) {
+                Log.e("getData", "Error getData", e);
+            }
             return null;
         }
 
         @Override
-        protected void onPostExecute(List<Card> stackItems) {
-            updateDataAndRefresh(stackItems);
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+            if (card != null) {
 
+            } else {
+                Toast.makeText(CardDetailActivity.this, "Error occurred", Toast.LENGTH_SHORT).show();
+            }
         }
     }
-    private void updateDataAndRefresh(List<Card> sizeInfoList) {
-        Card card = mylist.get(0);
-        Glide.with(this)
-                .load(card.getImg_url())
-                .error(R.drawable.rounded_box) // 加载失败显示的图像
-                .into(img);
-        cardId=mylist.get(0).getId();
-        landmarkid=mylist.get(0).getLandmark_id();
-        DatabaseTask2 databaseTask2 = new DatabaseTask2();
-        databaseTask2.execute();
-        DatabaseTask3 databaseTask3 = new DatabaseTask3();
-        databaseTask3.execute();
-
-    }
-
     private class DatabaseTask2 extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... voids) {
@@ -240,6 +230,7 @@ public class RecommendFragment extends Fragment {
                 PreparedStatement statement = connection.prepareStatement("SELECT * FROM image_data WHERE image_id = ?");
                 statement.setString(1, cardId);
                 ResultSet resultSet = statement.executeQuery();
+
                 if (resultSet.next()) {
                     String imageId = resultSet.getString("image_id");
                     String typeId1Inception = resultSet.getString("type_id1_inception");
@@ -269,6 +260,7 @@ public class RecommendFragment extends Fragment {
                     String dominantColor1 = resultSet.getString("dominant_color1");
                     String dominantColor2 = resultSet.getString("dominant_color2");
                     String dominantColor3 = resultSet.getString("dominant_color3");
+
                     // Create an ImageData object with retrieved data
                     imageData = new ImageData(imageId, typeId1Inception, type1Inception, confidence1Inception,
                             typeId2Inception, type2Inception, confidence2Inception,
@@ -293,7 +285,7 @@ public class RecommendFragment extends Fragment {
                 updateUI3(imageData);
                 //Toast.makeText(CardDetailActivity.this, cardId, Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(getActivity(), "Error occurred", Toast.LENGTH_SHORT).show();
+                Toast.makeText(CardDetailActivity.this, "Error occurred", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -302,7 +294,7 @@ public class RecommendFragment extends Fragment {
         protected Void doInBackground(Void... voids) {
             try (Connection connection = DriverManager.getConnection(url, user, password)) {
                 PreparedStatement statement = connection.prepareStatement("SELECT * FROM landmark WHERE landmark_id = ?");
-                statement.setString(1, landmarkid);
+                statement.setString(1, card.getLandmark_id());
                 ResultSet resultSet = statement.executeQuery();
 
                 if (resultSet.next()) {
@@ -337,11 +329,36 @@ public class RecommendFragment extends Fragment {
                 updateUI4(landmark);
                 //Toast.makeText(CardDetailActivity.this, card.getLandmark_id(), Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(getActivity(), "Error occurred", Toast.LENGTH_SHORT).show();
+                Toast.makeText(CardDetailActivity.this, "Error occurred", Toast.LENGTH_SHORT).show();
             }
         }
     }
 
+
+    // 更新 UI
+    private void updateUI(int width, int height, String imgurl, String author, String title) {
+
+        card_author.setText(author);
+        Glide.with(this)
+                .load(imgurl)
+                .error(R.drawable.rounded_box) // 加载失败显示的图像
+                .into(imageView);
+    }
+    private void updateUI2(Card card) {
+
+        title.setText(card.getTitle());
+        String temptxt = card.getAuthor();
+        if(temptxt.length()>20){
+            temptxt=temptxt.substring(0, 15);
+            temptxt+="...";
+        }
+        card_author.setText(temptxt);
+        Glide.with(this)
+                .load(card.getImg_url())
+                .error(R.drawable.rounded_box) // 加载失败显示的图像
+                .into(imageView);
+
+    }
     private void updateUI3(ImageData imageData1) {
 
         featuresTagTextView1.setText(imageData1.getType1Inception()+" | "+decimalFormat.format(imageData1.getConfidence1Inception()));
@@ -364,11 +381,10 @@ public class RecommendFragment extends Fragment {
         colorTextView1.setBackgroundColor(color3);
 
     }
-
     private void updateUI4(Landmark landmark) {
         location.setText(landmark.getLocation());
+        Marker marker = tencentMap.addMarker(new MarkerOptions(new LatLng(landmark.getLatitude(), landmark.getLongitude())));
         tencentMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(landmark.getLatitude(), landmark.getLongitude()), 4));
-        LatLng position = new LatLng(landmark.getLatitude(), landmark.getLongitude());
-        Marker marker = tencentMap.addMarker(new MarkerOptions(position));
+
     }
 }

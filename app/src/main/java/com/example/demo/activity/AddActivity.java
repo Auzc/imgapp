@@ -1,8 +1,10 @@
-package com.example.demo;
+package com.example.demo.activity;
 
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.demo.R;
 
 public class AddActivity extends AppCompatActivity {
     @Override

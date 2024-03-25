@@ -73,11 +73,13 @@
         </activity>
 
 
-        <activity android:name="com.example.demo.CardDetailActivity" />
-        <activity android:name="com.example.demo.BaseMapActivity" />
+        <activity android:name="com.example.demo.activity.CardDetailActivity" />
+        <activity android:name="com.example.demo.activity.BaseMapActivity" />
+        <activity android:name="com.example.demo.activity.ImagesActivity" />
 
+        <activity android:name="com.example.demo.activity.SQLTestActivity" />
 
-        <activity android:name="com.example.demo.SQLTestActivity" />
+        <activity android:name="com.example.demo.activity.MyWebViewActivity" />
     </application>
 
 </manifest>

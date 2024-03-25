@@ -12,10 +12,10 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.demo.fragment.AddFragment;
-import com.example.demo.fragment.HomeFragment;
 import com.example.demo.fragment.ListFragment;
 import com.example.demo.fragment.MapFragment;
 import com.example.demo.fragment.RecommendFragment;
+import com.example.demo.fragment.RecommendationFragment;
 import com.example.demo.fragment.UserFragment;
 import com.example.demo.fragment.TypeFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -23,12 +23,13 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 public class MainActivity extends AppCompatActivity {
     private BottomNavigationView bottomNavigationView;
 
-    private HomeFragment homeFragment;
+
     private MapFragment mapFragment;
     private UserFragment userFragment;
     private TypeFragment typeFragment;
     private ListFragment listFragment;
-    private RecommendFragment recommendFragment;
+    private RecommendationFragment recommendFragment;
+
     private AddFragment addFragment;
 
     @Override
@@ -44,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
         // 初始化底部导航栏和Fragment
         bottomNavigationView = findViewById(R.id.bottom_navigation);
 //        homeFragment = new HomeFragment();
-        recommendFragment = new RecommendFragment();
+        recommendFragment = new RecommendationFragment();
         mapFragment = new MapFragment();
         userFragment = new UserFragment();
         listFragment = new ListFragment();

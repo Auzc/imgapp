@@ -2,12 +2,13 @@
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/gradient_background">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:background="@drawable/gradient_background">
+        >
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -42,15 +43,65 @@
             android:layout_marginLeft="30dp"
             android:layout_marginRight="30dp"
             android:orientation="vertical"
-            android:background="@drawable/rounded_box2">
+            android:background="@color/white">
 
             <ImageView
+                android:id="@+id/img"
+
                 android:layout_width="match_parent"
-                android:layout_height="350dp"
+                android:layout_height="wrap_content"
                 android:background="@drawable/rounded_box"
-                android:src="@drawable/imgtest"
+                android:src="@drawable/a8cf7caf499b6"
                 android:scaleType="centerInside"
                 />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:background="@color/white">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerInParent="true"
+                    android:layout_marginRight="15dp"
+                    android:orientation="horizontal">
+                    <ImageView
+                        android:id="@+id/action_"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerInParent="true"
+                        android:layout_marginRight="5dp"
+                        android:src="@drawable/app_icon" />
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="7dp"
+                        android:layout_marginBottom="7dp"
+
+                        android:layout_marginRight="5dp"
+                        android:background="@color/background_gray"/>
+                    <ImageView
+                        android:layout_width="15dp"
+                        android:layout_height="15dp"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/location2"
+                        android:layout_gravity="center"
+                        />
+                    <TextView
+                        android:id="@+id/location"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/RosyBrown"
+                        android:textSize="8sp"
+                        android:text="location"
+                        android:layout_gravity="center"
+                        android:textStyle="bold"
+                        />
+                </LinearLayout>
+            </RelativeLayout>
 
 
         </LinearLayout>
@@ -421,33 +472,51 @@
                 </LinearLayout>
             </LinearLayout>
 
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:background="@color/background_gray"
+                android:layout_height="200dp"
+                android:layout_marginTop="30dp"
 
+                >
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginLeft="15dp"
+                    android:elevation="2dp"
+                    android:padding="5dp"
+                    android:background="@drawable/border_shape">
+                    <ImageButton
+                        android:id="@+id/satellite"
+                        android:layout_width="15dp"
+                        android:layout_height="15dp"
+                        android:background="@drawable/shape_button_test"
+                        android:gravity="center"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/satellite" />
+                    <TextView
+                        android:id="@+id/satellite1"
+                        android:layout_marginLeft="5dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:textSize="10sp"
+                        android:text="切换卫星图"/>
+
+                </LinearLayout>
+<!--                <com.tencent.tencentmap.mapsdk.maps.TextureMapView-->
+<!--                    android:id="@+id/mapView"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="match_parent"/>-->
+
+
+
+            </RelativeLayout>
 
         </LinearLayout>
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:background="@color/background_gray"
-            android:layout_height="300dp"
-            android:layout_marginTop="30dp"
-            android:padding="30dp"
-            >
-<!--            <com.tencent.tencentmap.mapsdk.maps.TextureMapView-->
-<!--                android:id="@+id/mapView"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="match_parent"/>-->
 
-            <ImageButton
-                android:id="@+id/my_location_button"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentRight="true"
-                android:gravity="center"
-                android:background="@drawable/shape_button_test"
-                android:scaleType="centerInside"
-                android:src="@drawable/location" />
-
-        </RelativeLayout>
 
         <TextView
             android:layout_width="match_parent"

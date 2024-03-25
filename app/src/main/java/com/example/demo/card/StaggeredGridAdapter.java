@@ -3,7 +3,6 @@ package com.example.demo.card;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,10 +15,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.demo.BaseMapActivity;
-import com.example.demo.CardDetailActivity;
+import com.example.demo.activity.CardDetailActivity;
 import com.example.demo.R;
-import com.example.demo.SQLTestActivity;
+import com.example.demo.data.Card;
 import com.example.demo.sqlHelper.DbOpenHelper;
 
 
@@ -75,7 +73,8 @@ public class StaggeredGridAdapter extends RecyclerView.Adapter<StaggeredGridAdap
                     // 在这里处理点击事件，跳转到详情界面
                     Intent intent = new Intent(context, CardDetailActivity.class);
                     // 在这里可以传递卡片的信息到详情界面
-                    intent.putExtra("card_id", card.getId());
+                    //intent.putExtra("card_id", card.getId());
+                    intent.putExtra("card", card);
                     context.startActivity(intent);
                 }
             });
@@ -144,7 +143,7 @@ public class StaggeredGridAdapter extends RecyclerView.Adapter<StaggeredGridAdap
 
 
     }
-    private class LikeAsyncTask extends AsyncTask<String, Void, Boolean> {
+    public class LikeAsyncTask extends AsyncTask<String, Void, Boolean> {
 
         private String contentId;
 

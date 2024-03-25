@@ -15,12 +15,13 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.demo.R;
-import com.example.demo.card.Card;
+import com.example.demo.data.Card;
 import com.example.demo.card.StaggeredGridAdapter;
 
 //import java.sql.Connection;
 import java.sql.Connection;
 import java.sql.DriverManager;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
@@ -103,7 +104,7 @@ public class ListFragment extends Fragment {
                 }
                 System.out.println("ID: " + id + ", URL: " + url + ", Landmark ID: " + landmarkId + ", Width: " + width + ", Height: " + height + ", Author: " + author + ", Title: " + title);
 
-                Card sizeInfo = new Card(title,author,id,url,width,height);
+                Card sizeInfo = new Card(title,author,id,url,width,height,landmarkId);
                 dataInfoList.add(sizeInfo);
             }
         } catch (Exception e) {

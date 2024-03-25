@@ -133,7 +133,7 @@ public class MapFragment extends Fragment {
 // 获取当前屏幕地图的视野范围
                 Projection projection = tencentMap.getProjection();
                 VisibleRegion region = projection.getVisibleRegion();
-                Toast.makeText(getActivity(), ("当前地图的视野范围：" + new Gson().toJson(region)), Toast.LENGTH_LONG).show();
+                //Toast.makeText(getActivity(), ("当前地图的视野范围：" + new Gson().toJson(region)), Toast.LENGTH_LONG).show();
             }
         });
         TextView satellite1 = view.findViewById(R.id.satellite1);

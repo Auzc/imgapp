@@ -85,15 +85,16 @@
                         android:background="@drawable/rounded_box"
                         android:gravity="left"
                         android:text="Color" />
+
                     <TextView
                         android:id="@+id/text2"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="8sp"
-                        android:textColor="@color/RosyBrown"
                         android:background="@drawable/rounded_box"
                         android:gravity="left"
-                        android:text="Color" />
+                        android:text="Color"
+                        android:textColor="@color/RosyBrown"
+                        android:textSize="8sp" />
                 </LinearLayout>
             </RelativeLayout>
 

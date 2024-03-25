@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".BaseMapActivity">
+    tools:context=".activity.BaseMapActivity">
 
     <!--基础地图-->
     <com.tencent.tencentmap.mapsdk.maps.TextureMapView

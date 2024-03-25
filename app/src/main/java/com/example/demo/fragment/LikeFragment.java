@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.demo.R;
-import com.example.demo.card.Card;
+import com.example.demo.data.Card;
 import com.example.demo.card.StaggeredGridAdapter;
 
 //import java.sql.Connection;
@@ -112,7 +112,7 @@ public class LikeFragment extends Fragment {
                         title = title.substring(0, title.length() - 4);
                     }
 
-                    Card sizeInfo = new Card(title, author, id, url, width, height);
+                    Card sizeInfo = new Card(title, author, id, url, width, height,landmarkId);
                     dataInfoList.add(sizeInfo);
                 }
             }

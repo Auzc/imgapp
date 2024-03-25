@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.example.demo.activity;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.demo.R;
 
 public class ColorActivity extends AppCompatActivity {
 

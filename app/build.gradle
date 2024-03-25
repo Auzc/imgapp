@@ -44,6 +44,7 @@ dependencies {
     implementation files('libs/tencent-mapsdk-android-official-release.5.4.1.facf3901.jar')
     implementation files('libs/TencentLocationSDK-v7.5.0-r4c7567e1-20230221202658-release.jar')
     implementation 'com.google.code.gson:gson:2.8.8'
+    //implementation files('libs/mysql-connector-java-8.0.16.jar')
 
 
     annotationProcessor 'com.github.bumptech.glide:compiler:4.12.0'
@@ -51,8 +52,12 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
 
     implementation 'mysql:mysql-connector-java:5.1.49'
+    implementation 'com.github.chrisbanes:PhotoView:2.3.0'
+    implementation 'com.github.bumptech.glide:glide:4.12.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.12.0'
 
 
+    implementation 'com.squareup.picasso:picasso:2.71828'
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'

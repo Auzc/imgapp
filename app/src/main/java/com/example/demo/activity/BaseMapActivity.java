@@ -1,9 +1,10 @@
-package com.example.demo;
+package com.example.demo.activity;
 
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.demo.R;
 import com.tencent.tencentmap.mapsdk.maps.TencentMap;
 import com.tencent.tencentmap.mapsdk.maps.TencentMapInitializer;
 import com.tencent.tencentmap.mapsdk.maps.TencentMapOptions;
