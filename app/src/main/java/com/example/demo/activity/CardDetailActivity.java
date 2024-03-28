@@ -8,12 +8,14 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
-import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -21,10 +23,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.bumptech.glide.Glide;
 import com.example.demo.R;
+import com.example.demo.adapter.SimilarityStaggeredGridAdapter;
 import com.example.demo.data.Card;
+import com.example.demo.data.CardSimilarity;
 import com.example.demo.data.ImageData;
 import com.example.demo.data.Landmark;
 import com.tencent.map.geolocation.TencentLocationManager;
@@ -47,10 +53,10 @@ public class CardDetailActivity extends AppCompatActivity {
             + "?useUnicode=true&characterEncoding=utf8";    // mysql 数据库连接 url
     private static String user = "au";    // 用户名
     private static String password = "Jzc4211315"; // 密码
-    private  Card card;
+    private  Card mycard;
     private String cardId;
     private ImageView imageView,wiji;
-    private TextView  card_author,title,featuresTagTextView1,featuresTagTextView2,featuresTagTextView3,ResNetFeaturesTagTextView1,ResNetFeaturesTagTextView2,ResNetFeaturesTagTextView3,tagTextView1,tagTextView2,tagTextView3,colorTextView1,colorTextView2,colorTextView3;
+    private TextView  tip,card_author,title,featuresTagTextView1,featuresTagTextView2,featuresTagTextView3,ResNetFeaturesTagTextView1,ResNetFeaturesTagTextView2,ResNetFeaturesTagTextView3,tagTextView1,tagTextView2,tagTextView3,colorTextView1,colorTextView2,colorTextView3;
     private TextView location;
     private ImageData imageData;
 
@@ -58,10 +64,27 @@ public class CardDetailActivity extends AppCompatActivity {
     TencentMap tencentMap;
     private Landmark landmark;
     DecimalFormat decimalFormat = new DecimalFormat("0.00%");
+    private RecyclerView mRecyclerView;
+    private SimilarityStaggeredGridAdapter mAdapter;
+    private List<Card> mCards;
+    private List<CardSimilarity> myCardSimilarityList = new ArrayList<>();
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_card_detail);
+        mycard = getIntent().getParcelableExtra("card");
+
+        mRecyclerView = findViewById(R.id.recyclerView);
+        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+        mRecyclerView.setLayoutManager(layoutManager);
+        mAdapter = new SimilarityStaggeredGridAdapter(this, 20);
+        mRecyclerView.setAdapter(mAdapter);
+//
+//        // 模拟一些数据
+//        List<CardSimilarity> cardSimilarityscardSimilaritys = generateDummyCards();
+//        mAdapter.setCards(cardSimilarityscardSimilaritys);
+        tip = findViewById(R.id.tip);
+
         imageView = findViewById(R.id.imageView);
         card_author = findViewById(R.id.card_author);
         title = findViewById(R.id.title);
@@ -87,16 +110,18 @@ public class CardDetailActivity extends AppCompatActivity {
         colorTextView3 = findViewById(R.id.colorTextView3);
         // 获取传递的卡片ID
         //cardId = getIntent().getStringExtra("card_id");
-        card = getIntent().getParcelableExtra("card");
-        if(card!=null){
-            updateUI2(card);
-            cardId = card.getId();
-            DatabaseTask databaseTask = new DatabaseTask();
-            databaseTask.execute();
+
+        if(mycard !=null){
+            updateUI2(mycard);
+            cardId = mycard.getId();
+//            DatabaseTask databaseTask = new DatabaseTask();
+//            databaseTask.execute();
             DatabaseTask2 databaseTask2 = new DatabaseTask2();
             databaseTask2.execute();
             DatabaseTask3 databaseTask3 = new DatabaseTask3();
             databaseTask3.execute();
+            DatabaseTask4 databaseTask4 = new DatabaseTask4();
+            databaseTask4.execute();
         }
         TencentMapInitializer.setAgreePrivacy(true);
         TencentLocationManager.setUserAgreePrivacy(true);
@@ -168,7 +193,7 @@ public class CardDetailActivity extends AppCompatActivity {
                 Intent intent = new Intent(CardDetailActivity.this, ImagesActivity.class);
                 // 在这里可以传递卡片的信息到详情界面
                 //intent.putExtra("card_id", card.getId());
-                intent.putExtra("card", card);
+                intent.putExtra("card", mycard);
                 startActivity(intent);
             }
         });
@@ -204,7 +229,7 @@ public class CardDetailActivity extends AppCompatActivity {
                     if (title.length() > 4) {
                         title = title.substring(0, title.length() - 4);
                     }
-                    card = new Card(title,author,id,imgurl,width,height,landmarkId);
+                    mycard = new Card(title,author,id,imgurl,width,height,landmarkId);
 
                 }
             } catch (Exception e) {
@@ -216,10 +241,10 @@ public class CardDetailActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
-            if (card != null) {
+            if (mycard != null) {
 
             } else {
-                Toast.makeText(CardDetailActivity.this, "Error occurred", Toast.LENGTH_SHORT).show();
+                Toast.makeText(CardDetailActivity.this, "DatabaseTask Error occurred", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -285,7 +310,7 @@ public class CardDetailActivity extends AppCompatActivity {
                 updateUI3(imageData);
                 //Toast.makeText(CardDetailActivity.this, cardId, Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(CardDetailActivity.this, "Error occurred", Toast.LENGTH_SHORT).show();
+                Toast.makeText(CardDetailActivity.this, "DatabaseTask2 Error occurred", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -294,7 +319,7 @@ public class CardDetailActivity extends AppCompatActivity {
         protected Void doInBackground(Void... voids) {
             try (Connection connection = DriverManager.getConnection(url, user, password)) {
                 PreparedStatement statement = connection.prepareStatement("SELECT * FROM landmark WHERE landmark_id = ?");
-                statement.setString(1, card.getLandmark_id());
+                statement.setString(1, mycard.getLandmark_id());
                 ResultSet resultSet = statement.executeQuery();
 
                 if (resultSet.next()) {
@@ -329,7 +354,7 @@ public class CardDetailActivity extends AppCompatActivity {
                 updateUI4(landmark);
                 //Toast.makeText(CardDetailActivity.this, card.getLandmark_id(), Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(CardDetailActivity.this, "Error occurred", Toast.LENGTH_SHORT).show();
+                Toast.makeText(CardDetailActivity.this, "DatabaseTask3 Error occurred", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -385,6 +410,141 @@ public class CardDetailActivity extends AppCompatActivity {
         location.setText(landmark.getLocation());
         Marker marker = tencentMap.addMarker(new MarkerOptions(new LatLng(landmark.getLatitude(), landmark.getLongitude())));
         tencentMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(landmark.getLatitude(), landmark.getLongitude()), 4));
+
+
+    }
+
+    // 模拟一些数据的方法
+    private List<CardSimilarity> generateDummyCards() {
+        List<CardSimilarity> cardSimilaritys = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+
+            cardSimilaritys.add(new CardSimilarity(mycard, 1.0F));
+        }
+        return cardSimilaritys;
+    }
+
+    private class DatabaseTask4 extends AsyncTask<Void, Void, List<CardSimilarity>> {
+        @Override
+        protected List<CardSimilarity> doInBackground(Void... voids) {
+            List<CardSimilarity> cardSimilarityList = new ArrayList<>();
+
+            try (Connection connection = DriverManager.getConnection(url, user, password)) {
+                PreparedStatement statement = connection.prepareStatement("SELECT * FROM imagesimilarit" +
+                        " INNER JOIN Images ON imagesimilarity.Image_ID_2 = Images.id WHERE Image_ID_1 = ?");
+                statement.setString(1, mycard.getId());
+                ResultSet resultSet = statement.executeQuery();
+
+                while (resultSet.next()) {
+                    String id = resultSet.getString("id");
+                    String imgurl = resultSet.getString("url");
+                    String landmarkId = resultSet.getString("landmark_id");
+                    int width = resultSet.getInt("width");
+                    int height = resultSet.getInt("height");
+                    String author = resultSet.getString("author");
+                    String title = resultSet.getString("title");
+                    float similarity = resultSet.getFloat("Similarity");
+
+                    // Process title
+                    if (title.length() > 5) {
+                        title = title.substring(5);
+                    }
+                    if (title.length() > 4) {
+                        title = title.substring(0, title.length() - 4);
+                    }
+
+                    Card card1 = new Card(title, author, id, imgurl, width, height, landmarkId);
+                    cardSimilarityList.add(new CardSimilarity(card1, similarity));
+                }
+            } catch (SQLException e) {
+                Log.e("getData", "Error getData", e);
+            }
+            try (Connection connection = DriverManager.getConnection(url, user, password)) {
+                PreparedStatement statement = connection.prepareStatement("SELECT * FROM imagesimilarity_color INNER JOIN Images ON imagesimilarity.Image_ID_2 = Images.id WHERE Image_ID_1 = ?");
+                statement.setString(1, mycard.getId());
+                ResultSet resultSet = statement.executeQuery();
+
+                while (resultSet.next()) {
+                    String id = resultSet.getString("id");
+                    String imgurl = resultSet.getString("url");
+                    String landmarkId = resultSet.getString("landmark_id");
+                    int width = resultSet.getInt("width");
+                    int height = resultSet.getInt("height");
+                    String author = resultSet.getString("author");
+                    String title = resultSet.getString("title");
+                    float similarity = resultSet.getFloat("Similarity");
+
+                    // Process title
+                    if (title.length() > 5) {
+                        title = title.substring(5);
+                    }
+                    if (title.length() > 4) {
+                        title = title.substring(0, title.length() - 4);
+                    }
+
+                    Card card1 = new Card(title, author, id, imgurl, width, height, landmarkId);
+                    cardSimilarityList.add(new CardSimilarity(card1, similarity));
+                }
+            } catch (SQLException e) {
+                Log.e("getData", "Error getData", e);
+            }
+
+
+//            try (Connection connection = DriverManager.getConnection(url, user, password)) {
+//                PreparedStatement statement = connection.prepareStatement("SELECT * FROM Images WHERE landmark_id = ? limit 10");
+//                statement.setString(1, mycard.getLandmark_id());
+//                ResultSet resultSet = statement.executeQuery();
+//
+//                while (resultSet.next()) {
+//                    String id = resultSet.getString("id");
+//                    String imgurl = resultSet.getString("url");
+//                    String landmarkId = resultSet.getString("landmark_id");
+//                    int width = resultSet.getInt("width");
+//                    int height = resultSet.getInt("height");
+//                    String author = resultSet.getString("author");
+//                    String title = resultSet.getString("title");
+//
+//                    // Process title
+//                    if (title.length() > 5) {
+//                        title = title.substring(5);
+//                    }
+//                    if (title.length() > 4) {
+//                        title = title.substring(0, title.length() - 4);
+//                    }
+//
+//                    Card card1 = new Card(title, author, id, imgurl, width, height, landmarkId);
+//                    if(mycard.equals(card1)){
+//
+//                    }else{
+//                        cardSimilarityList.add(new CardSimilarity(card1, (float) 100));
+//                    }
+//
+//                }
+//            } catch (SQLException e) {
+//                Log.e("getData", "Error getData", e);
+//            }
+
+            return cardSimilarityList;
+        }
+
+        @Override
+        protected void onPostExecute(List<CardSimilarity> cardSimilarityList) {
+            super.onPostExecute(cardSimilarityList);
+            if (cardSimilarityList != null && !cardSimilarityList.isEmpty()) {
+                updateUI5(cardSimilarityList);
+            } else {
+                updateUI6();
+                //Toast.makeText(CardDetailActivity.this, "无相关推荐", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private void updateUI5(List<CardSimilarity> myCardSimilarityList) {
+        mAdapter.setCardsSimilaritys(myCardSimilarityList);
+        tip.setText("");
+    }
+    private void updateUI6() {
+        tip.setText("暂无相关推荐");
 
     }
 }

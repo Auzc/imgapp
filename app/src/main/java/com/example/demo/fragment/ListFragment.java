@@ -16,7 +16,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.demo.R;
 import com.example.demo.data.Card;
-import com.example.demo.card.StaggeredGridAdapter;
+import com.example.demo.adapter.StaggeredGridAdapter;
 
 //import java.sql.Connection;
 import java.sql.Connection;

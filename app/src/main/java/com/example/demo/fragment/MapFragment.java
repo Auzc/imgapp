@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Looper;
 import android.util.Log;
@@ -31,6 +32,10 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.example.demo.R;
+import com.example.demo.activity.CardDetailActivity;
+import com.example.demo.data.Card;
+import com.example.demo.data.CardSimilarity;
+import com.example.demo.data.Landmark;
 import com.google.android.material.tabs.TabLayout;
 import com.google.gson.Gson;
 import com.tencent.map.geolocation.TencentLocation;
@@ -58,8 +63,15 @@ import com.tencent.tencentmap.mapsdk.maps.model.VisibleRegion;
 
 import org.w3c.dom.Text;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MapFragment extends Fragment {
 
@@ -70,10 +82,14 @@ public class MapFragment extends Fragment {
 
     private ViewPager viewPager;
     private TabLayout tabLayout;
-
+    private Map<Landmark, Integer> landmark_hashMap = new HashMap<>();
+    private LatLng nearLeft ,nearRight ,farLeft, farRight ;
     private ImageButton satellite;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
-
+    private static String url = "jdbc:mysql://rm-2ze740g8q9yaf3v06co.mysql.rds.aliyuncs.com:3296/mydesign"
+            + "?useUnicode=true&characterEncoding=utf8";    // mysql 数据库连接 url
+    private static String user = "au";    // 用户名
+    private static String password = "Jzc4211315"; // 密码
     public  static TencentLocation mylocation = null;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -108,7 +124,7 @@ public class MapFragment extends Fragment {
                 .build());
 
         tencentMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(34.7952, 114.3076), 1));
-
+        //tencentMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng( 33.266700, -114.000000), 9));
 
         ImageButton myLocationButton = view.findViewById(R.id.my_location_button);
 //        // 获取定位管理器实例
@@ -176,33 +192,7 @@ public class MapFragment extends Fragment {
             @Override
             public void onInfoWindowClick(Marker marker) {
 
-//                BmobQuery<FootballField> query = new BmobQuery<>();
-//                query.findObjects(new FindListener<FootballField>() {
-//                    @Override
-//                    public void done(List<FootballField> list, BmobException e) {
-//                        if (e == null) {
-//                            for(int i=0;i<list.size();i++){
-//                                if(list.get(i).getName().toString().equals(marker.getTitle().toString())){
-//                                    Intent intent =new Intent();
-//                                    intent.setClass(getActivity(), MessageOfFieldActivity.class);
-//                                    intent.putExtra("name", list.get(i).getName());
-//                                    intent.putExtra("avatar_file", list.get(i).getFile().getFileUrl());
-//                                    intent.putExtra("lat",list.get(i).getAddress_lat());
-//                                    intent.putExtra("lng",list.get(i).getAddress_lng());
-//                                    intent.putExtra("addressName",list.get(i).getAddress_name());
-//                                    intent.putExtra("field_size",list.get(i).getField_size());
-//                                    intent.putExtra("character",list.get(i).getCharacter());
-//                                    startActivity(intent);
-//                                }
 //
-//                            }
-//
-//                        } else {
-//                            // 查询失败
-//                        }
-//                    }
-//                });
-//                Log.i("TAG","InfoWindow被点击时回调函数");
             }
             //  windowWidth - InfoWindow的宽度
             //windowHigh - InfoWindow的高度
@@ -227,6 +217,8 @@ public class MapFragment extends Fragment {
         });
 
 
+
+
         return view;
 
 
@@ -240,11 +232,19 @@ public class MapFragment extends Fragment {
         double visibleRegionArea = calculateVisibleRegionArea(region);
 
         // 设置你定义的阈值
-        double threshold = 10; // 举例阈值为1000
+        double threshold = 3; // 举例阈值为1000
 
         if (visibleRegionArea < threshold) {
             // 当地图视野范围小于阈值时，显示 Toast 消息
-            Toast.makeText(getActivity(), new Gson().toJson(region), Toast.LENGTH_LONG).show();
+            //Toast.makeText(getActivity(), new Gson().toJson(region), Toast.LENGTH_LONG).show();
+
+             nearLeft = region.nearLeft;
+             nearRight = region.nearRight;
+             farLeft = region.farLeft;
+             farRight = region.farRight;
+            DatabaseTask databaseTask = new DatabaseTask();
+            databaseTask.execute();
+
 
         }
     }
@@ -258,6 +258,87 @@ public class MapFragment extends Fragment {
         return width * height;
     }
 
+    private class DatabaseTask extends AsyncTask<Void, Void, List<Landmark>> {
+        @Override
+        protected List<Landmark> doInBackground(Void... voids) {
+            List<Landmark> landmarkList = new ArrayList<>();
+            try (Connection connection = DriverManager.getConnection(url, user, password)) {
+                // 添加日志记录SQL查询语句
+
+                String sqlQuery = "SELECT * FROM landmark " +
+                        "WHERE latitude BETWEEN " + nearLeft.latitude + " AND " + farRight.latitude +
+                        " AND longitude BETWEEN " + nearLeft.longitude + " AND " + farRight.longitude;
+                Log.d("DatabaseTask", "Executing SQL Query: " + sqlQuery);
+                PreparedStatement statement = connection.prepareStatement(sqlQuery);
+                ResultSet resultSet = statement.executeQuery();
+                while (resultSet.next()) {
+                    // 读取每个地标并添加到列表中
+                    Landmark landmark = new Landmark(
+                            resultSet.getString("landmark_id"),
+                            resultSet.getFloat("latitude"),
+                            resultSet.getFloat("longitude"),
+                            resultSet.getInt("id_count"),
+                            resultSet.getString("category"),
+                            resultSet.getString("supercategory"),
+                            resultSet.getString("hierarchical_label"),
+                            resultSet.getString("natural_or_human_made"),
+                            resultSet.getString("Instance_of"),
+                            resultSet.getString("Location"),
+                            resultSet.getString("operator"),
+                            resultSet.getString("inception"),
+                            resultSet.getString("Image_URL")
+                    );
+
+                    landmarkList.add(landmark);
+                    if (landmark_hashMap.get(landmark) == null ) {
+                        landmark_hashMap.put(landmark, 0);
+                        Log.d("DatabaseTask", "landmark: " + landmark.getLandmarkId());
+                    }
+                }
+            } catch (Exception e) {
+                Log.e("getData", "Error getData", e);
+            }
+            return landmarkList;
+        }
+
+        @Override
+        protected void onPostExecute(List<Landmark> landmarkList) {
+            super.onPostExecute(landmarkList);
+
+            if (landmarkList != null && !landmarkList.isEmpty()) {
+                // 更新UI
+                updateUI();
+            } else {
+                // 添加日志记录如果地标列表为空
+                Log.d("DatabaseTask", "No landmarks retrieved from database.");
+            }
+        }
+    }
+
+    private void updateUI() {
+        for (Map.Entry<Landmark, Integer> entry : landmark_hashMap.entrySet()) {
+
+            Integer value = entry.getValue();
+            if (value == 1) {
+                continue;
+            }
+            // 对值不为1的条目执行操作
+            entry.setValue(1);
+            Landmark landmark = entry.getKey();
+            LatLng position = new LatLng(landmark.getLatitude(), landmark.getLongitude());
+            MarkerOptions options = new MarkerOptions(position);
+            options.infoWindowEnable(true);//默认为true
+            options.title(landmark.getLandmarkId())//标注的InfoWindow的标题
+                    .snippet(landmark.getLocation()+landmark.getLatitude()+" "+landmark.getLongitude());
+            Marker marker = tencentMap.addMarker(options);
+            marker.setClickable(true);
+
+//设置Marker支持点击
+
+            // 添加日志记录已在地图上添加标记的地标
+            Log.d("DatabaseTask", "Added marker for landmark: " + landmark.getLandmarkId());
+        }
+    }
 
 
     TencentLocationListener locationListener = new TencentLocationListener() {
@@ -270,7 +351,7 @@ public class MapFragment extends Fragment {
                         "经度：" + location.getLongitude() + "\n" +
                         "纬度：" + location.getLatitude();
                 LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-                tencentMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 6));
+                tencentMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 9));
                 Resources res = getResources();
 
             } else {

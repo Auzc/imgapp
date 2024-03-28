@@ -10,28 +10,24 @@
     import android.view.ViewGroup;
     import android.widget.ImageButton;
     import android.widget.ImageView;
+    import android.widget.LinearLayout;
     import android.widget.TextView;
     import android.widget.Toast;
 
     import androidx.annotation.NonNull;
     import androidx.annotation.Nullable;
     import androidx.fragment.app.Fragment;
-    import androidx.recyclerview.widget.LinearLayoutManager;
     import androidx.recyclerview.widget.RecyclerView;
     import androidx.viewpager2.widget.ViewPager2;
 
     import com.bumptech.glide.Glide;
     import com.example.demo.DatabaseHelper;
     import com.example.demo.R;
-    import com.example.demo.activity.CardDetailActivity;
     import com.example.demo.activity.ImagesActivity;
-    import com.example.demo.activity.SQLTestActivity;
-    import com.example.demo.card.StaggeredGridAdapter;
     import com.example.demo.data.Card;
     import com.example.demo.data.ImageData;
     import com.example.demo.data.Landmark;
     import com.example.demo.data.RecommendationData;
-    import com.tencent.map.geolocation.TencentLocation;
     import com.tencent.map.geolocation.TencentLocationManager;
     import com.tencent.map.sdk.comps.vis.VisualLayer;
     import com.tencent.map.sdk.comps.vis.VisualLayerOptions;
@@ -48,7 +44,6 @@
     import java.sql.DriverManager;
     import java.sql.PreparedStatement;
     import java.sql.ResultSet;
-    import java.sql.SQLException;
     import java.text.DecimalFormat;
     import java.util.ArrayList;
     import java.util.List;
@@ -66,16 +61,39 @@
 
         private int currentOffset = new Random().nextInt(2000);
         private List<RecommendationData> mydataInfoList = new ArrayList<>();
+        private View view1;
+
+        private ImageView point;
+
+
         @Nullable
         @Override
         public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_recommendation, container, false);
 
             viewPager = rootView.findViewById(R.id.viewPager);
+            view1 = rootView.findViewById(R.id.view1);
+            point = rootView.findViewById(R.id.point);
+
 
             DatabaseTask databaseTask = new DatabaseTask();
             databaseTask.execute();
+            viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+                @Override
+                public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                    super.onPageScrolled(position, positionOffset, positionOffsetPixels);
+                    // 根据滑动的偏移量计算缩放比例
+                    float scale = 1 - positionOffset;
+                    // 设置 View1 的宽度缩放动画
+                    LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) view1.getLayoutParams();
+                    layoutParams.width = (int) (240 * scale); // 初始宽度 * 缩放比例
+                    view1.setLayoutParams(layoutParams);
 
+                    float alpha = 1 - positionOffset;
+                    // 设置点的透明度
+                    point.setAlpha(alpha);
+                }
+            });
 
             return rootView;
         }
@@ -123,6 +141,9 @@
 
                 holder.card_love.setImageResource(R.drawable.lovewhite);
                 holder.card_love.setTag(R.drawable.lovewhite);
+                holder.card_store.setImageResource(R.drawable.store);
+                holder.card_comment.setImageResource(R.drawable.comment);
+
                 holder.card_love.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -184,13 +205,14 @@
 
                 TencentMap tencentMap;
 
-                private ImageView img,card_love;
+                private ImageView img,card_love,card_store,card_comment;
                 public ViewHolder(@NonNull View view) {
                     super(view);
                     location = view.findViewById(R.id.location);
 
                     card_love = view.findViewById(R.id.card_love);
-
+                    card_store = view.findViewById(R.id.card_store);
+                    card_comment = view.findViewById(R.id.card_comment);
 
                     // Features Tag TextViews
                     featuresTagTextView1 = view.findViewById(R.id.featuresTagTextView1);

@@ -1,4 +1,4 @@
-package com.example.demo.card;
+package com.example.demo.adapter;
 
 import android.content.Context;
 import android.util.DisplayMetrics;
