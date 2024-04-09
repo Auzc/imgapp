@@ -33,6 +33,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.example.demo.R;
 import com.example.demo.activity.CardDetailActivity;
+import com.example.demo.activity.LandmarkDetailActivity;
 import com.example.demo.data.Card;
 import com.example.demo.data.CardSimilarity;
 import com.example.demo.data.Landmark;
@@ -86,8 +87,8 @@ public class MapFragment extends Fragment {
     private LatLng nearLeft ,nearRight ,farLeft, farRight ;
     private ImageButton satellite;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
-    private static String url = "jdbc:mysql://rm-2ze740g8q9yaf3v06co.mysql.rds.aliyuncs.com:3296/mydesign"
-            + "?useUnicode=true&characterEncoding=utf8";    // mysql 数据库连接 url
+    private static final String url = "jdbc:mysql://rm-2ze740g8q9yaf3v06co.mysql.rds.aliyuncs.com:3296/mydesign" +
+            "?useUnicode=true&characterEncoding=utf8&useSSL=false";
     private static String user = "au";    // 用户名
     private static String password = "Jzc4211315"; // 密码
     public  static TencentLocation mylocation = null;
@@ -192,12 +193,44 @@ public class MapFragment extends Fragment {
             @Override
             public void onInfoWindowClick(Marker marker) {
 
+                for (Map.Entry<Landmark, Integer> entry : landmark_hashMap.entrySet()) {
+                    Landmark landmark = entry.getKey();
+
+                    // 检查地标ID是否与标记的标题匹配
+                    if (landmark.getLandmarkId().equals(marker.getTitle())) {
+
+//                        String landmarkInfo = "Landmark ID: " + landmark.getLandmarkId() +
+//                                "\nLatitude: " + landmark.getLatitude() +
+//                                "\nLongitude: " + landmark.getLongitude() +
+//                                "\nCategory: " + landmark.getCategory() +
+//                                "\nSupercategory: " + landmark.getSupercategory() +
+//                                "\nHierarchical Label: " + landmark.getHierarchicalLabel() +
+//                                "\nNatural or Human Made: " + landmark.getNaturalOrHumanMade() +
+//                                "\nInstance Of: " + landmark.getInstanceOf() +
+//                                "\nLocation: " + landmark.getLocation() +
+//                                "\nOperator: " + landmark.getOperator() +
+//                                "\nInception: " + landmark.getInception() +
+//                                "\nImage URL: " + landmark.getImageUrl();
 //
+//// 使用Toast显示地标信息
+//                        Toast.makeText(getActivity(), landmarkInfo, Toast.LENGTH_LONG).show();
+// 创建一个Intent对象
+                        Intent intent = new Intent(getActivity(), LandmarkDetailActivity.class);
+
+// 将Landmark对象放入Intent中
+                        intent.putExtra("landmark", landmark);
+
+// 启动LandmarkDetailActivity
+                        startActivity(intent);
+
+                        break; // 如果只需要找到第一个匹配，可以在这里退出循环
+                    }
+                }
+
+
+
             }
-            //  windowWidth - InfoWindow的宽度
-            //windowHigh - InfoWindow的高度
-            // x - 点击点在InfoWindow的x坐标点
-            //y - 点击点在InfoWindow的y坐标点
+
             @Override
             public void onInfoWindowClickLocation(int width, int height, int x, int y) {
                 Log.i("TAG","当InfoWindow点击时，点击点的回调");
@@ -238,10 +271,10 @@ public class MapFragment extends Fragment {
             // 当地图视野范围小于阈值时，显示 Toast 消息
             //Toast.makeText(getActivity(), new Gson().toJson(region), Toast.LENGTH_LONG).show();
 
-             nearLeft = region.nearLeft;
-             nearRight = region.nearRight;
-             farLeft = region.farLeft;
-             farRight = region.farRight;
+            nearLeft = region.nearLeft;
+            nearRight = region.nearRight;
+            farLeft = region.farLeft;
+            farRight = region.farRight;
             DatabaseTask databaseTask = new DatabaseTask();
             databaseTask.execute();
 
@@ -327,9 +360,13 @@ public class MapFragment extends Fragment {
             Landmark landmark = entry.getKey();
             LatLng position = new LatLng(landmark.getLatitude(), landmark.getLongitude());
             MarkerOptions options = new MarkerOptions(position);
+            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ip);
+            bitmap = Bitmap.createScaledBitmap(bitmap, 48, 48, false);
+            BitmapDescriptor custom = BitmapDescriptorFactory.fromBitmap(bitmap);
             options.infoWindowEnable(true);//默认为true
             options.title(landmark.getLandmarkId())//标注的InfoWindow的标题
-                    .snippet(landmark.getLocation()+landmark.getLatitude()+" "+landmark.getLongitude());
+                    .icon(custom)
+                    .snippet(landmark.getLocation()+"\n"+landmark.getLatitude()+"，"+landmark.getLongitude());
             Marker marker = tencentMap.addMarker(options);
             marker.setClickable(true);
 

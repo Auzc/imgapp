@@ -1,4 +1,4 @@
-package com.example.demo.sqlHelper;
+package com.example.demo.sqlhelper;
 
 
 import java.sql.Connection;

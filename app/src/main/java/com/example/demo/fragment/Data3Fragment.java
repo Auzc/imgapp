@@ -22,24 +22,28 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-public class HistoryFragment extends Fragment {
+public class Data3Fragment extends Fragment {
 
     private RecyclerView mRecyclerView;
     private StaggeredGridAdapter mAdapter;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private List<Card> mDataInfoList;
     private static final String url = "jdbc:mysql://rm-2ze740g8q9yaf3v06co.mysql.rds.aliyuncs.com:3296/mydesign" +
-            "?useUnicode=true&characterEncoding=utf8&useSSL=false";  // mysql 数据库连接 url
-    private static String user = "au";    // 用户名
-    private static String password = "Jzc4211315"; // 密码
-    private int dataOffset = 0; // 数据偏移量，用于分页查询
+            "?useUnicode=true&characterEncoding=utf8&useSSL=false";
+
+    // mysql 数据库连接 url
+    private static final String user = "au";    // 用户名
+    private static final String password = "Jzc4211315"; // 密码
     private static final int PAGE_SIZE = 20; // 每页数据数量
+    private LoadDataAsyncTask loadDataAsyncTask; // 用于引用异步任务
+    private int dataOffset = 0; // 数据偏移量，用于分页查询
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_datalist, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_history, container, false);
 
         mRecyclerView = rootView.findViewById(R.id.recyclerView);
         mSwipeRefreshLayout = rootView.findViewById(R.id.swipeRefreshLayout);
@@ -48,17 +52,14 @@ public class HistoryFragment extends Fragment {
         StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(layoutManager);
 
-        mAdapter = new StaggeredGridAdapter(requireContext(),20);
+        mAdapter = new StaggeredGridAdapter(requireContext(), 20);
         mRecyclerView.setAdapter(mAdapter);
 
         // 设置下拉刷新监听器
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                // 加载数据
-                dataOffset = 0; // 重置偏移量
-                loadDataFromDatabase();
-            }
+        mSwipeRefreshLayout.setOnRefreshListener(() -> {
+            // 加载数据
+            dataOffset = 0; // 重置偏移量
+            loadDataFromDatabase();
         });
 
         // 设置RecyclerView滚动监听
@@ -68,8 +69,7 @@ public class HistoryFragment extends Fragment {
                 super.onScrolled(recyclerView, dx, dy);
                 int visibleItemCount = layoutManager.getChildCount();
                 int totalItemCount = layoutManager.getItemCount();
-                int[] firstVisibleItems = null;
-                firstVisibleItems = layoutManager.findFirstVisibleItemPositions(firstVisibleItems);
+                int[] firstVisibleItems = layoutManager.findFirstVisibleItemPositions(null);
                 int pastVisibleItems = firstVisibleItems[0];
 
                 if ((visibleItemCount + pastVisibleItems) >= totalItemCount) {
@@ -89,7 +89,10 @@ public class HistoryFragment extends Fragment {
     }
 
     private void loadDataFromDatabase() {
-        new LoadDataAsyncTask().execute();
+        // 创建新的异步任务
+        loadDataAsyncTask = new LoadDataAsyncTask();
+        // 执行异步任务
+        loadDataAsyncTask.execute();
     }
 
     private void updateUI(List<Card> dataInfoList) {
@@ -109,16 +112,20 @@ public class HistoryFragment extends Fragment {
             List<Card> dataInfoList = new ArrayList<>();
             try (Connection connection = DriverManager.getConnection(url, user, password)) {
                 PreparedStatement statement = connection.prepareStatement(
-                        "SELECT i.id, i.url, i.landmark_id, i.width, i.height, i.author, " +
-                                "SUBSTRING(LEFT(i.title, LENGTH(i.title) - 4), 6) AS title " +
-                                "FROM Images i " +
-                                "INNER JOIN history_table h ON i.id = h.content_id " +
-                                "WHERE h.user_id = ? " +
-                                "LIMIT ? OFFSET ?"
+                        "SELECT i.*\n" +
+                                "FROM Images i\n" +
+                                "JOIN (\n" +
+                                "    SELECT DISTINCT i.landmark_id\n" +
+                                "    FROM Images i\n" +
+                                "    JOIN like_table l ON i.id = l.content_id\n" +
+                                ") sub ON i.landmark_id = sub.landmark_id\n" +
+                                "WHERE i.id NOT IN (\n" +
+                                "    SELECT content_id\n" +
+                                "    FROM like_table\n" +
+                                ")\n" +
+                                "GROUP BY i.landmark_id, i.id\n" +
+                                "ORDER BY i.landmark_id, i.id\n"
                 );
-                statement.setString(1, "user123");
-                statement.setInt(2, PAGE_SIZE);
-                statement.setInt(3, dataOffset);
                 ResultSet resultSet = statement.executeQuery();
                 while (resultSet.next()) {
                     String id = resultSet.getString("id");
@@ -129,6 +136,12 @@ public class HistoryFragment extends Fragment {
                     String author = resultSet.getString("author");
                     String title = resultSet.getString("title");
 
+                    if (title.length() > 5) {
+                        title = title.substring(5);
+                    }
+                    if (title.length() > 4) {
+                        title = title.substring(0, title.length() - 4);
+                    }
                     Card sizeInfo = new Card(title, author, id, url, width, height, landmarkId);
                     dataInfoList.add(sizeInfo);
                 }
@@ -139,6 +152,7 @@ public class HistoryFragment extends Fragment {
             } catch (Exception e) {
                 Log.e("getData", "Error getData", e);
             }
+            Collections.shuffle(dataInfoList);
             return dataInfoList;
         }
 
@@ -147,5 +161,12 @@ public class HistoryFragment extends Fragment {
             super.onPostExecute(dataInfoList);
             updateUI(dataInfoList);
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // 当Fragment重新获得焦点时，重新加载数据
+        loadDataFromDatabase();
     }
 }

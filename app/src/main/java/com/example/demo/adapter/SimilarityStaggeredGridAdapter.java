@@ -19,11 +19,12 @@ import com.example.demo.R;
 import com.example.demo.activity.CardDetailActivity;
 import com.example.demo.data.Card;
 import com.example.demo.data.CardSimilarity;
-import com.example.demo.sqlHelper.DbOpenHelper;
+import com.example.demo.sqlhelper.DbOpenHelper;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.List;
@@ -35,7 +36,9 @@ public class SimilarityStaggeredGridAdapter extends RecyclerView.Adapter<Similar
     private List<CardSimilarity> cardSimilaritys;
     private Context context;
     private int space;
-    private String jdbcUrl = "jdbc:mysql://rm-2ze740g8q9yaf3v06co.mysql.rds.aliyuncs.com:3296/mydesign";
+
+    private static final String jdbcUrl = "jdbc:mysql://rm-2ze740g8q9yaf3v06co.mysql.rds.aliyuncs.com:3296/mydesign" +
+            "?useUnicode=true&characterEncoding=utf8&useSSL=false";
     private String user = "admin1";
     private String password = "Jzc123456";
     private String userId = "user123";
@@ -90,6 +93,7 @@ public class SimilarityStaggeredGridAdapter extends RecyclerView.Adapter<Similar
         layoutParams.width = (int) itemWidth;
         float width = cardSimilarity.getCard().getWidth();
         float height = cardSimilarity.getCard().getHeight();
+        String imgid = cardSimilarity.getCard().getId();
         float scale = height / width;
 
         if (scale > STANDARD_SCALE) {
@@ -127,6 +131,11 @@ public class SimilarityStaggeredGridAdapter extends RecyclerView.Adapter<Similar
             holder.similarity.setText("相关度："+decimalFormat.format(cardSimilarity.getSimilarity()));
         }
 
+        holder.author.setText(temptxt);
+        holder.love.setTag(R.drawable.love); // 设置初始状态为未喜欢
+        holder.love.setImageResource(R.drawable.love);
+
+        new CheckLikeAsyncTask(holder, imgid).execute();
 
         holder.love.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -137,12 +146,14 @@ public class SimilarityStaggeredGridAdapter extends RecyclerView.Adapter<Similar
                 if (currentImageResource == R.drawable.love) {
 
 //                // 在这里调用 AsyncTask 来执行数据库操作
-                    new LikeAsyncTask(cardSimilarity.getCard().getId()).execute();
+                    new LikeAsyncTask(imgid).execute();
+
                     //insert(userId,contentId);
                     holder.love.setImageResource(R.drawable.loved);
                     // 更新标签以便下次点击知道当前状态
                     holder.love.setTag(R.drawable.loved);
                 } else {
+                    new DisLikeAsyncTask(imgid).execute();
                     holder.love.setImageResource(R.drawable.love);
                     // 更新标签以便下次点击知道当前状态
                     holder.love.setTag(R.drawable.love);
@@ -166,7 +177,7 @@ public class SimilarityStaggeredGridAdapter extends RecyclerView.Adapter<Similar
         @Override
         protected Boolean doInBackground(String... voids) {
             try (Connection connection = DriverManager.getConnection(jdbcUrl, user, password)) {
-                String sql = "INSERT INTO history_table (user_id, content_id) VALUES (?, ?)";
+                String sql = "INSERT IGNORE INTO history_table (user_id, content_id) VALUES (?, ?)";
                 try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
                     preparedStatement.setString(1, userId);
                     preparedStatement.setString(2, contentId); // 使用传入的 contentId
@@ -191,22 +202,22 @@ public class SimilarityStaggeredGridAdapter extends RecyclerView.Adapter<Similar
             }
         }
     }
-    public class LikeAsyncTask extends AsyncTask<String, Void, Boolean> {
+    public class LikeAsyncTask extends AsyncTask<Void, Void, Boolean> {
 
         private String contentId;
 
         public LikeAsyncTask(String contentId) {
-            this.contentId = contentId;
-        }
 
+            this.contentId = contentId;
+
+        }
         @Override
-        protected Boolean doInBackground(String... voids) {
+        protected Boolean doInBackground(Void... voids) {
             try (Connection connection = DriverManager.getConnection(jdbcUrl, user, password)) {
-                String sql = "INSERT INTO Like_Table (user_id, content_id) VALUES (?, ?)";
+                String sql = "INSERT IGNORE INTO Like_Table (user_id, content_id) VALUES (?, ?)";
                 try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
                     preparedStatement.setString(1, userId);
-                    preparedStatement.setString(2, contentId); // 使用传入的 contentId
-                    // 执行插入操作
+                    preparedStatement.setString(2, contentId);
                     int rowsInserted = preparedStatement.executeUpdate();
                     return rowsInserted > 0;
                 }
@@ -227,6 +238,94 @@ public class SimilarityStaggeredGridAdapter extends RecyclerView.Adapter<Similar
             }
         }
     }
+
+
+
+    public class DisLikeAsyncTask extends AsyncTask<String, Void, Boolean> {
+
+        private String contentId;
+
+        public DisLikeAsyncTask(String contentId) {
+            this.contentId = contentId;
+        }
+
+        @Override
+        protected Boolean doInBackground(String... voids) {
+            try (Connection connection = DriverManager.getConnection(jdbcUrl, user, password)) {
+                String sql = "DELETE FROM Like_Table WHERE user_id = ? AND content_id = ?";
+                try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+                    preparedStatement.setString(1, userId);
+                    preparedStatement.setString(2, contentId); // 使用传入的 contentId
+                    // 执行删除操作
+                    int rowsDeleted = preparedStatement.executeUpdate();
+                    return rowsDeleted > 0;
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return false;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Boolean success) {
+            if (success) {
+                // 插入成功，显示成功的 Toast 消息
+                //Toast.makeText(context, "点赞成功！", Toast.LENGTH_SHORT).show();
+            } else {
+                // 插入失败，显示失败的 Toast 消息
+                //Toast.makeText(context, "点赞失败", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    public class CheckLikeAsyncTask extends AsyncTask<Void, Void, Boolean> {
+
+        private ViewHolder holder;
+        private ImageView loveImageView;
+        private String contentId;
+
+
+        public CheckLikeAsyncTask(ViewHolder holder, String contentId) {
+            this.holder = holder;
+            this.contentId = contentId;
+
+        }
+
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            try (Connection connection = DriverManager.getConnection(jdbcUrl, user, password)) {
+                String sql = "SELECT * FROM Like_Table WHERE user_id = ? AND content_id = ?";
+                try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+                    preparedStatement.setString(1, userId);
+                    preparedStatement.setString(2, contentId);
+                    try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                        return resultSet.next();
+                    }
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return false;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Boolean alreadyLiked) {
+            if (alreadyLiked) {
+                // 用户已经点赞，更新UI显示点赞状态
+                holder.love.setImageResource(R.drawable.loved);
+                holder.love.setTag(R.drawable.loved);
+            } else {
+                // 用户未点赞，保持UI显示原状态
+                holder.love.setImageResource(R.drawable.love);
+                holder.love.setTag(R.drawable.love);
+            }
+        }
+
+    }
+
+
+
 
 
     @Override

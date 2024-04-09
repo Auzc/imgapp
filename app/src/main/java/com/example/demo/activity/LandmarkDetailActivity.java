@@ -1,7 +1,6 @@
 package com.example.demo.activity;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,7 +8,6 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
@@ -20,7 +18,6 @@ import com.example.demo.R;
 import com.example.demo.adapter.SimilarityStaggeredGridAdapter;
 import com.example.demo.data.Card;
 import com.example.demo.data.CardSimilarity;
-import com.example.demo.data.ImageData;
 import com.example.demo.data.Landmark;
 import com.tencent.map.geolocation.TencentLocationManager;
 import com.tencent.map.sdk.comps.vis.VisualLayer;
@@ -41,90 +38,65 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-
 public class LandmarkDetailActivity extends AppCompatActivity {
-    ImageView back_btn;
-    private static String driver = "com.mysql.cj.jdbc.Driver";
-    private static String url = "jdbc:mysql://rm-2ze740g8q9yaf3v06co.mysql.rds.aliyuncs.com:3296/mydesign"
-            + "?useUnicode=true&characterEncoding=utf8";    // mysql 数据库连接 url
+    private static final String url = "jdbc:mysql://rm-2ze740g8q9yaf3v06co.mysql.rds.aliyuncs.com:3296/mydesign" +
+            "?useUnicode=true&characterEncoding=utf8&useSSL=false";    // mysql 数据库连接 url
     private static String user = "au";    // 用户名
     private static String password = "Jzc4211315"; // 密码
-    private  Card mycard;
-    private String cardId;
     private ImageView imageView,wiji;
-    private TextView  tip,card_author,title,featuresTagTextView1,featuresTagTextView2,featuresTagTextView3,ResNetFeaturesTagTextView1,ResNetFeaturesTagTextView2,ResNetFeaturesTagTextView3,tagTextView1,tagTextView2,tagTextView3,colorTextView1,colorTextView2,colorTextView3;
-    private TextView location;
-    private ImageData imageData;
-
+    private TextView text,title,tip;
+    private Landmark landmark;
     MapView mapView;
     TencentMap tencentMap;
-    private Landmark landmark;
+
     DecimalFormat decimalFormat = new DecimalFormat("0.00%");
     private RecyclerView mRecyclerView;
     private SimilarityStaggeredGridAdapter mAdapter;
-    private List<Card> mCards;
-    private List<CardSimilarity> myCardSimilarityList = new ArrayList<>();
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_card_detail);
-        mycard = getIntent().getParcelableExtra("card");
-
+        setContentView(R.layout.activity_landmark_detail);
+        imageView = findViewById(R.id.imageView);
+        wiji=findViewById(R.id.wiji);
+        text = findViewById(R.id.text);
+        title = findViewById(R.id.title);
+        tip = findViewById(R.id.tip);
         mRecyclerView = findViewById(R.id.recyclerView);
         StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(layoutManager);
         mAdapter = new SimilarityStaggeredGridAdapter(this, 20);
         mRecyclerView.setAdapter(mAdapter);
-//
-//        // 模拟一些数据
-//        List<CardSimilarity> cardSimilarityscardSimilaritys = generateDummyCards();
-//        mAdapter.setCards(cardSimilarityscardSimilaritys);
-        tip = findViewById(R.id.tip);
+        // 获取传入的Intent
+        Intent intent = getIntent();
 
-        imageView = findViewById(R.id.imageView);
-        card_author = findViewById(R.id.card_author);
-        title = findViewById(R.id.title);
-        location = findViewById(R.id.location);
-// Features Tag TextViews
-        featuresTagTextView1 = findViewById(R.id.featuresTagTextView1);
-        featuresTagTextView2 = findViewById(R.id.featuresTagTextView2);
-        featuresTagTextView3 = findViewById(R.id.featuresTagTextView3);
+        // 检查Intent和附加的数据是否为空
+        if (intent != null && intent.hasExtra("landmark")) {
+            // 从Intent中获取Landmark对象
+            landmark = intent.getParcelableExtra("landmark");
 
-// ResNet Features Tag TextViews
-        ResNetFeaturesTagTextView1 = findViewById(R.id.ResNetFeaturesTagTextView1);
-        ResNetFeaturesTagTextView2 = findViewById(R.id.ResNetFeaturesTagTextView2);
-        ResNetFeaturesTagTextView3 = findViewById(R.id.ResNetFeaturesTagTextView3);
-
-// Tag TextViews
-        tagTextView1 = findViewById(R.id.tagTextView1);
-        tagTextView2 = findViewById(R.id.tagTextView2);
-        tagTextView3 = findViewById(R.id.tagTextView3);
-
-// Color TextViews
-        colorTextView1 = findViewById(R.id.colorTextView1);
-        colorTextView2 = findViewById(R.id.colorTextView2);
-        colorTextView3 = findViewById(R.id.colorTextView3);
-        // 获取传递的卡片ID
-        //cardId = getIntent().getStringExtra("card_id");
-
-        if(mycard !=null){
-            updateUI2(mycard);
-            cardId = mycard.getId();
-//            DatabaseTask databaseTask = new DatabaseTask();
-//            databaseTask.execute();
-
-            DatabaseTask3 databaseTask3 = new DatabaseTask3();
-            databaseTask3.execute();
-            DatabaseTask4 databaseTask4 = new DatabaseTask4();
-            databaseTask4.execute();
+            // 显示地标信息
+            displayLandmarkInfo(landmark);
         }
+        wiji.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(LandmarkDetailActivity.this, MyWebViewActivity.class);
+                // 在这里可以传递卡片的信息到详情界面
+
+                intent.putExtra("url", landmark.getCategory());
+                startActivity(intent);
+            }
+        });
         TencentMapInitializer.setAgreePrivacy(true);
         TencentLocationManager.setUserAgreePrivacy(true);
         mapView = findViewById(R.id.mapView);
         tencentMap = mapView.getMap();
-        tencentMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(34.7952, 114.3076), 1));
+
+        Marker marker = tencentMap.addMarker(new MarkerOptions(new LatLng(landmark.getLatitude(), landmark.getLongitude())));
+        tencentMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(landmark.getLatitude(), landmark.getLongitude()), 4));
         VisualLayer mVisualLayer = tencentMap.addVisualLayer(new VisualLayerOptions("03097e5d0ff8") //xxxxxxxx为官网配置生成对应图层的图层id
                 .newBuilder()
                 .setAlpha(1)
@@ -160,136 +132,34 @@ public class LandmarkDetailActivity extends AppCompatActivity {
             }
         });
 
-        wiji=findViewById(R.id.wiji);
-        wiji.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(LandmarkDetailActivity.this, MyWebViewActivity.class);
-                // 在这里可以传递卡片的信息到详情界面
-
-                intent.putExtra("url", landmark.getCategory());
-                startActivity(intent);
-            }
-        });
 
 
-        //Toast.makeText(this, card.getImg_url(), Toast.LENGTH_SHORT).show();
-//        if (!cardId.equals("")) {
-//            new DatabaseTask().execute();
-//        }
-//        ViewPager viewPager = findViewById(R.id.viewPager);
-//        List<String> imageUrls = new ArrayList<>();
-//        imageUrls.add(card.getImg_url());
-//// 添加更多图片 URL
-//        ImagePagerAdapter adapter = new ImagePagerAdapter(this, imageUrls);
-//        viewPager.setAdapter(adapter);
+        DatabaseTask4 databaseTask4 = new DatabaseTask4();
+        databaseTask4.execute();
 
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(LandmarkDetailActivity.this, ImagesActivity.class);
-                // 在这里可以传递卡片的信息到详情界面
-                //intent.putExtra("card_id", card.getId());
-                intent.putExtra("card", mycard);
-                startActivity(intent);
-            }
-        });
-        back_btn = findViewById(R.id.back_btn);
-        back_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-    }
-    private class DatabaseTask3 extends AsyncTask<Void, Void, Void> {
-        @Override
-        protected Void doInBackground(Void... voids) {
-            try (Connection connection = DriverManager.getConnection(url, user, password)) {
-                PreparedStatement statement = connection.prepareStatement("SELECT * FROM landmark WHERE landmark_id = ?");
-                statement.setString(1, mycard.getLandmark_id());
-                ResultSet resultSet = statement.executeQuery();
 
-                if (resultSet.next()) {
-                    String landmarkId = resultSet.getString("landmark_id");
-                    Float latitude = resultSet.getFloat("Latitude");
-                    Float longitude = resultSet.getFloat("Longitude");
-                    Integer idCount = resultSet.getInt("id_count");
-                    String category = resultSet.getString("category");
-                    String supercategory = resultSet.getString("supercategory");
-                    String hierarchicalLabel = resultSet.getString("hierarchical_label");
-                    String naturalOrHumanMade = resultSet.getString("natural_or_human_made");
-                    String instanceOf = resultSet.getString("Instance_of");
-                    String location = resultSet.getString("Location");
-                    String operator = resultSet.getString("Operator");
-                    String inception = resultSet.getString("Inception");
-                    String imageUrl = resultSet.getString("Image_URL");
 
-                    // Create a Landmark object with retrieved data
-                    landmark = new Landmark(landmarkId, latitude, longitude, idCount, category, supercategory,
-                            hierarchicalLabel, naturalOrHumanMade, instanceOf, location, operator, inception, imageUrl);
-                }
-            } catch (Exception e) {
-                Log.e("getData", "Error getData", e);
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void result) {
-            super.onPostExecute(result);
-            if (landmark != null) {
-                updateUI(landmark.getImageUrl(), landmark.getLandmarkId(), landmark.getLandmarkId());
-                updateUI4(landmark);
-                //Toast.makeText(CardDetailActivity.this, card.getLandmark_id(), Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(LandmarkDetailActivity.this, "DatabaseTask3 Error occurred", Toast.LENGTH_SHORT).show();
-            }
-        }
     }
 
+    // 显示地标信息的方法
+    private void displayLandmarkInfo(Landmark landmark) {
+        // 查找布局中的TextView
+        TextView landmarkIdTextView = findViewById(R.id.landmark_id);
+        TextView latitudeTextView = findViewById(R.id.latitude);
+        TextView longitudeTextView = findViewById(R.id.longitude);
+        // 添加其他文本视图以显示更多地标信息
 
-    // 更新 UI
-    private void updateUI(String imgurl, String author, String title) {
-
-        card_author.setText(author);
         Glide.with(this)
-                .load(imgurl)
+                .load(landmark.getImageUrl())
                 .error(R.drawable.rounded_box) // 加载失败显示的图像
                 .into(imageView);
-    }
-    private void updateUI2(Card card) {
-
-        title.setText(card.getTitle());
-        String temptxt = card.getAuthor();
-        if(temptxt.length()>20){
-            temptxt=temptxt.substring(0, 15);
-            temptxt+="...";
-        }
-        card_author.setText(temptxt);
-        Glide.with(this)
-                .load(card.getImg_url())
-                .error(R.drawable.rounded_box) // 加载失败显示的图像
-                .into(imageView);
-
-    }
-
-    private void updateUI4(Landmark landmark) {
-        location.setText(landmark.getLocation());
-        Marker marker = tencentMap.addMarker(new MarkerOptions(new LatLng(landmark.getLatitude(), landmark.getLongitude())));
-        tencentMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(landmark.getLatitude(), landmark.getLongitude()), 4));
-
-
-    }
-
-    // 模拟一些数据的方法
-    private List<CardSimilarity> generateDummyCards() {
-        List<CardSimilarity> cardSimilaritys = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-
-            cardSimilaritys.add(new CardSimilarity(mycard, 1.0F));
-        }
-        return cardSimilaritys;
+        // 将地标信息设置到文本视图中
+        landmarkIdTextView.setText("Landmark ID: " + landmark.getLandmarkId());
+        title.setText(landmark.getLocation());
+        text.setText("Supercategory: "+landmark.getSupercategory()+"\nHierarchicalLabel: "+landmark.getHierarchicalLabel()+"\n"+landmark.getNaturalOrHumanMade()+"\n"+landmark.getInstanceOf()+"\n"+landmark.getOperator()+"\n"+landmark.getInception());
+        latitudeTextView.setText("Latitude: " + landmark.getLatitude());
+        longitudeTextView.setText("Longitude: " + landmark.getLongitude());
+        // 添加其他文本视图以显示更多地标信息
     }
 
     private class DatabaseTask4 extends AsyncTask<Void, Void, List<CardSimilarity>> {
@@ -298,69 +168,8 @@ public class LandmarkDetailActivity extends AppCompatActivity {
             List<CardSimilarity> cardSimilarityList = new ArrayList<>();
 
             try (Connection connection = DriverManager.getConnection(url, user, password)) {
-                PreparedStatement statement = connection.prepareStatement("SELECT * FROM imagesimilarit" +
-                        " INNER JOIN Images ON imagesimilarity.Image_ID_2 = Images.id WHERE Image_ID_1 = ?");
-                statement.setString(1, mycard.getId());
-                ResultSet resultSet = statement.executeQuery();
-
-                while (resultSet.next()) {
-                    String id = resultSet.getString("id");
-                    String imgurl = resultSet.getString("url");
-                    String landmarkId = resultSet.getString("landmark_id");
-                    int width = resultSet.getInt("width");
-                    int height = resultSet.getInt("height");
-                    String author = resultSet.getString("author");
-                    String title = resultSet.getString("title");
-                    float similarity = resultSet.getFloat("Similarity");
-
-                    // Process title
-                    if (title.length() > 5) {
-                        title = title.substring(5);
-                    }
-                    if (title.length() > 4) {
-                        title = title.substring(0, title.length() - 4);
-                    }
-
-                    Card card1 = new Card(title, author, id, imgurl, width, height, landmarkId);
-                    cardSimilarityList.add(new CardSimilarity(card1, similarity));
-                }
-            } catch (SQLException e) {
-                Log.e("getData", "Error getData", e);
-            }
-            try (Connection connection = DriverManager.getConnection(url, user, password)) {
-                PreparedStatement statement = connection.prepareStatement("SELECT * FROM imagesimilarity_color INNER JOIN Images ON imagesimilarity.Image_ID_2 = Images.id WHERE Image_ID_1 = ?");
-                statement.setString(1, mycard.getId());
-                ResultSet resultSet = statement.executeQuery();
-
-                while (resultSet.next()) {
-                    String id = resultSet.getString("id");
-                    String imgurl = resultSet.getString("url");
-                    String landmarkId = resultSet.getString("landmark_id");
-                    int width = resultSet.getInt("width");
-                    int height = resultSet.getInt("height");
-                    String author = resultSet.getString("author");
-                    String title = resultSet.getString("title");
-                    float similarity = resultSet.getFloat("Similarity");
-
-                    // Process title
-                    if (title.length() > 5) {
-                        title = title.substring(5);
-                    }
-                    if (title.length() > 4) {
-                        title = title.substring(0, title.length() - 4);
-                    }
-
-                    Card card1 = new Card(title, author, id, imgurl, width, height, landmarkId);
-                    cardSimilarityList.add(new CardSimilarity(card1, similarity));
-                }
-            } catch (SQLException e) {
-                Log.e("getData", "Error getData", e);
-            }
-
-
-            try (Connection connection = DriverManager.getConnection(url, user, password)) {
                 PreparedStatement statement = connection.prepareStatement("SELECT * FROM Images WHERE landmark_id = ? limit 10");
-                statement.setString(1, mycard.getLandmark_id());
+                statement.setString(1, landmark.getLandmarkId());
                 ResultSet resultSet = statement.executeQuery();
 
                 while (resultSet.next()) {
@@ -381,18 +190,16 @@ public class LandmarkDetailActivity extends AppCompatActivity {
                     }
 
                     Card card1 = new Card(title, author, id, imgurl, width, height, landmarkId);
-                    if(mycard.equals(card1)){
+                    cardSimilarityList.add(new CardSimilarity(card1, (float) 100));
 
-                    }else{
-                        cardSimilarityList.add(new CardSimilarity(card1, (float) 100));
-                    }
 
                 }
             } catch (SQLException e) {
                 Log.e("getData", "Error getData", e);
             }
-
+            Collections.shuffle(cardSimilarityList);
             return cardSimilarityList;
+
         }
 
         @Override
@@ -402,7 +209,7 @@ public class LandmarkDetailActivity extends AppCompatActivity {
                 updateUI5(cardSimilarityList);
             } else {
                 updateUI6();
-                //Toast.makeText(CardDetailActivity.this, "无相关推荐", Toast.LENGTH_SHORT).show();
+
             }
         }
     }

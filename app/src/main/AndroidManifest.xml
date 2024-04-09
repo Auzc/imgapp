@@ -81,6 +81,8 @@
         <activity android:name="com.example.demo.activity.HistoryActivity" />
 
         <activity android:name="com.example.demo.activity.MyWebViewActivity" />
+        <activity android:name="com.example.demo.activity.LandmarkDetailActivity" />
+
     </application>
 
 </manifest>

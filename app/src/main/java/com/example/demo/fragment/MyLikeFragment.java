@@ -24,14 +24,16 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HistoryFragment extends Fragment {
+public class MyLikeFragment extends Fragment {
 
     private RecyclerView mRecyclerView;
     private StaggeredGridAdapter mAdapter;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private List<Card> mDataInfoList;
     private static final String url = "jdbc:mysql://rm-2ze740g8q9yaf3v06co.mysql.rds.aliyuncs.com:3296/mydesign" +
-            "?useUnicode=true&characterEncoding=utf8&useSSL=false";  // mysql 数据库连接 url
+            "?useUnicode=true&characterEncoding=utf8&useSSL=false";
+
+      // mysql 数据库连接 url
     private static String user = "au";    // 用户名
     private static String password = "Jzc4211315"; // 密码
     private int dataOffset = 0; // 数据偏移量，用于分页查询
@@ -39,7 +41,7 @@ public class HistoryFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_datalist, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_history, container, false);
 
         mRecyclerView = rootView.findViewById(R.id.recyclerView);
         mSwipeRefreshLayout = rootView.findViewById(R.id.swipeRefreshLayout);
@@ -112,7 +114,7 @@ public class HistoryFragment extends Fragment {
                         "SELECT i.id, i.url, i.landmark_id, i.width, i.height, i.author, " +
                                 "SUBSTRING(LEFT(i.title, LENGTH(i.title) - 4), 6) AS title " +
                                 "FROM Images i " +
-                                "INNER JOIN history_table h ON i.id = h.content_id " +
+                                "INNER JOIN like_table h ON i.id = h.content_id " +
                                 "WHERE h.user_id = ? " +
                                 "LIMIT ? OFFSET ?"
                 );

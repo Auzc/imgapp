@@ -12,6 +12,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.demo.fragment.AddFragment;
+import com.example.demo.fragment.List2Fragment;
 import com.example.demo.fragment.ListFragment;
 import com.example.demo.fragment.MapFragment;
 import com.example.demo.fragment.RecommendFragment;
@@ -27,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
     private MapFragment mapFragment;
     private UserFragment userFragment;
     private TypeFragment typeFragment;
-    private ListFragment listFragment;
+    private List2Fragment listFragment;
     private RecommendationFragment recommendFragment;
 
     private AddFragment addFragment;
@@ -48,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
         recommendFragment = new RecommendationFragment();
         mapFragment = new MapFragment();
         userFragment = new UserFragment();
-        listFragment = new ListFragment();
+        listFragment = new List2Fragment();
 //        addFragment = new AddFragment();
         typeFragment = new TypeFragment();
         // 默认显示HomeFragment

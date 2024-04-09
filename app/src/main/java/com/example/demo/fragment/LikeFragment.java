@@ -36,8 +36,8 @@ public class LikeFragment extends Fragment {
     private StaggeredGridAdapter mAdapter;
     private List<Card> mCards;
 
-    private static String url = "jdbc:mysql://rm-2ze740g8q9yaf3v06co.mysql.rds.aliyuncs.com:3296/mydesign"
-            + "?useUnicode=true&characterEncoding=utf8";    // mysql 数据库连接 url
+    private static final String url = "jdbc:mysql://rm-2ze740g8q9yaf3v06co.mysql.rds.aliyuncs.com:3296/mydesign" +
+            "?useUnicode=true&characterEncoding=utf8&useSSL=false";
     private static String user = "au";    // 用户名
     private static String password = "Jzc4211315"; // 密码
     private boolean isLoading = false;
@@ -81,40 +81,27 @@ public class LikeFragment extends Fragment {
     public List<Card> getData(int offset, int limit) {
         List<Card> dataInfoList = new ArrayList<>();
         try (Connection connection = DriverManager.getConnection(url, user, password)) {
-            PreparedStatement likeStatement = connection.prepareStatement("SELECT content_id FROM like_table WHERE user_id = ?");
-            likeStatement.setString(1, "user123");
-            ResultSet likeResultSet = likeStatement.executeQuery();
 
-            // 存储content_id的集合
-            List<String> contentIds = new ArrayList<>();
-            while (likeResultSet.next()) {
-                String contentId = likeResultSet.getString("content_id");
-                contentIds.add(contentId);
-            }
+            PreparedStatement statement = connection.prepareStatement(
+                    "SELECT i.id, i.url, i.landmark_id, i.width, i.height, i.author, " +
+                            "SUBSTRING(LEFT(i.title, LENGTH(i.title) - 4), 6) AS title " +
+                            "FROM Images i " +
+                            "INNER JOIN like_table h ON i.id = h.content_id " +
+                            "WHERE h.user_id = ?"
+            );
+            statement.setString(1, "user123");
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                String id = resultSet.getString("id");
+                String url = resultSet.getString("url");
+                String landmarkId = resultSet.getString("landmark_id");
+                int width = resultSet.getInt("width");
+                int height = resultSet.getInt("height");
+                String author = resultSet.getString("author");
+                String title = resultSet.getString("title");
 
-            // 在Images表中根据content_id查询数据
-            for (String contentId : contentIds) {
-                PreparedStatement statement = connection.prepareStatement("SELECT * FROM Images WHERE id = ?");
-                statement.setString(1, contentId);
-                ResultSet resultSet = statement.executeQuery();
-                while (resultSet.next()) {
-                    String id = resultSet.getString("id");
-                    String url = resultSet.getString("url");
-                    String landmarkId = resultSet.getString("landmark_id");
-                    int width = resultSet.getInt("width");
-                    int height = resultSet.getInt("height");
-                    String author = resultSet.getString("author");
-                    String title = resultSet.getString("title");
-                    if (title.length() > 5) {
-                        title = title.substring(5);
-                    }
-                    if (title.length() > 4) {
-                        title = title.substring(0, title.length() - 4);
-                    }
-
-                    Card sizeInfo = new Card(title, author, id, url, width, height,landmarkId);
-                    dataInfoList.add(sizeInfo);
-                }
+                Card sizeInfo = new Card(title, author, id, url, width, height, landmarkId);
+                dataInfoList.add(sizeInfo);
             }
         }catch (Exception e) {
             Log.e("getData", "Error getData", e);

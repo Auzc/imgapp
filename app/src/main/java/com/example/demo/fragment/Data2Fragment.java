@@ -22,20 +22,24 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-public class HistoryFragment extends Fragment {
+public class Data2Fragment extends Fragment {
 
     private RecyclerView mRecyclerView;
     private StaggeredGridAdapter mAdapter;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private List<Card> mDataInfoList;
     private static final String url = "jdbc:mysql://rm-2ze740g8q9yaf3v06co.mysql.rds.aliyuncs.com:3296/mydesign" +
-            "?useUnicode=true&characterEncoding=utf8&useSSL=false";  // mysql 数据库连接 url
+            "?useUnicode=true&characterEncoding=utf8&useSSL=false";
+
+    // mysql 数据库连接 url
     private static String user = "au";    // 用户名
     private static String password = "Jzc4211315"; // 密码
     private int dataOffset = 0; // 数据偏移量，用于分页查询
     private static final int PAGE_SIZE = 20; // 每页数据数量
+    private LoadDataAsyncTask loadDataAsyncTask; // 用于引用异步任务
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -68,8 +72,7 @@ public class HistoryFragment extends Fragment {
                 super.onScrolled(recyclerView, dx, dy);
                 int visibleItemCount = layoutManager.getChildCount();
                 int totalItemCount = layoutManager.getItemCount();
-                int[] firstVisibleItems = null;
-                firstVisibleItems = layoutManager.findFirstVisibleItemPositions(firstVisibleItems);
+                int[] firstVisibleItems = layoutManager.findFirstVisibleItemPositions(null);
                 int pastVisibleItems = firstVisibleItems[0];
 
                 if ((visibleItemCount + pastVisibleItems) >= totalItemCount) {
@@ -88,8 +91,20 @@ public class HistoryFragment extends Fragment {
         return rootView;
     }
 
+//    @Override
+//    public void onPause() {
+//        super.onPause();
+//        // 在 Fragment 不再聚焦时取消 AsyncTask
+//        if (loadDataAsyncTask != null && !loadDataAsyncTask.isCancelled()) {
+//            loadDataAsyncTask.cancel(true);
+//        }
+//    }
+
     private void loadDataFromDatabase() {
-        new LoadDataAsyncTask().execute();
+        // 创建新的异步任务
+        loadDataAsyncTask = new LoadDataAsyncTask();
+        // 执行异步任务
+        loadDataAsyncTask.execute();
     }
 
     private void updateUI(List<Card> dataInfoList) {
@@ -109,16 +124,15 @@ public class HistoryFragment extends Fragment {
             List<Card> dataInfoList = new ArrayList<>();
             try (Connection connection = DriverManager.getConnection(url, user, password)) {
                 PreparedStatement statement = connection.prepareStatement(
-                        "SELECT i.id, i.url, i.landmark_id, i.width, i.height, i.author, " +
-                                "SUBSTRING(LEFT(i.title, LENGTH(i.title) - 4), 6) AS title " +
-                                "FROM Images i " +
-                                "INNER JOIN history_table h ON i.id = h.content_id " +
-                                "WHERE h.user_id = ? " +
-                                "LIMIT ? OFFSET ?"
+                        "SELECT DISTINCT Images.id, Images.url, Images.landmark_id, Images.width, Images.height, Images.author, Images.title\n" +
+                                "FROM history_table\n" +
+                                "JOIN like_table ON history_table.content_id = like_table.content_id\n" +
+                                "JOIN imagesimilarity_color ON like_table.content_id = imagesimilarity_color.Image_ID_1\n" +
+                                "JOIN Images ON imagesimilarity_color.Image_ID_2 = Images.id\n" +
+                                "LIMIT ? OFFSET ?;"
                 );
-                statement.setString(1, "user123");
-                statement.setInt(2, PAGE_SIZE);
-                statement.setInt(3, dataOffset);
+                statement.setInt(1, PAGE_SIZE);
+                statement.setInt(2, dataOffset);
                 ResultSet resultSet = statement.executeQuery();
                 while (resultSet.next()) {
                     String id = resultSet.getString("id");
@@ -129,16 +143,23 @@ public class HistoryFragment extends Fragment {
                     String author = resultSet.getString("author");
                     String title = resultSet.getString("title");
 
+                    if (title.length() > 5) {
+                        title = title.substring(5);
+                    }
+                    if (title.length() > 4) {
+                        title = title.substring(0, title.length() - 4);
+                    }
                     Card sizeInfo = new Card(title, author, id, url, width, height, landmarkId);
                     dataInfoList.add(sizeInfo);
                 }
 
-                // 数据偏移量增加
+                // 更新当前偏移量
                 dataOffset += PAGE_SIZE;
 
             } catch (Exception e) {
                 Log.e("getData", "Error getData", e);
             }
+            Collections.shuffle(dataInfoList);
             return dataInfoList;
         }
 
@@ -148,4 +169,12 @@ public class HistoryFragment extends Fragment {
             updateUI(dataInfoList);
         }
     }
+    @Override
+    public void onResume() {
+        super.onResume();
+        // 当Fragment重新获得焦点时，重新加载数据
+        loadDataFromDatabase();
+    }
+
+
 }

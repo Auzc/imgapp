@@ -50,14 +50,16 @@ public class TypeFragment extends Fragment {
         tabLayout.getTabAt(0).setText("特征数据集1");
         tabLayout.getTabAt(1).setText("特征数据集2");
         tabLayout.getTabAt(2).setText("特征数据集3");
+        tabLayout.getTabAt(3).setText("无特征数据 ");
     }
 
     private void setupViewPager(ViewPager viewPager) {
         Adapter adapter = new Adapter(getChildFragmentManager());
 
-        adapter.addFragment(new LikeFragment(), R.drawable.love);
-        adapter.addFragment(new LikeFragment(),  R.drawable.love);
-        adapter.addFragment(new LikeFragment(), R.drawable.love);
+        adapter.addFragment(new Data1Fragment(), R.drawable.love);
+        adapter.addFragment(new Data2Fragment(),  R.drawable.love);
+        adapter.addFragment(new Data3Fragment(), R.drawable.love);
+        adapter.addFragment(new List3Fragment(), R.drawable.love);
 //        adapter.addFragment(new UserFragment(),  R.drawable.love);
 
         viewPager.setAdapter(adapter);

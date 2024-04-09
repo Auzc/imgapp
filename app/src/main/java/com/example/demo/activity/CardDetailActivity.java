@@ -50,10 +50,15 @@ import com.tencent.tencentmap.mapsdk.maps.model.OverlayLevel;
 public class CardDetailActivity extends AppCompatActivity {
     ImageView back_btn;
     private static String driver = "com.mysql.cj.jdbc.Driver";
-    private static String url = "jdbc:mysql://rm-2ze740g8q9yaf3v06co.mysql.rds.aliyuncs.com:3296/mydesign"
-            + "?useUnicode=true&characterEncoding=utf8";    // mysql 数据库连接 url
+    private static final String url = "jdbc:mysql://rm-2ze740g8q9yaf3v06co.mysql.rds.aliyuncs.com:3296/mydesign" +
+            "?useUnicode=true&characterEncoding=utf8&useSSL=false";    // mysql 数据库连接 url
     private static String user = "au";    // 用户名
     private static String password = "Jzc4211315"; // 密码
+    private DatabaseTask databaseTask;
+    private DatabaseTask2 databaseTask2;
+    private DatabaseTask3 databaseTask3;
+    private DatabaseTask4 databaseTask4;
+
     private  Card mycard;
     private String cardId;
     private ImageView imageView,wiji;
@@ -115,13 +120,13 @@ public class CardDetailActivity extends AppCompatActivity {
         if(mycard !=null){
             updateUI2(mycard);
             cardId = mycard.getId();
-//            DatabaseTask databaseTask = new DatabaseTask();
+//            databaseTask = new DatabaseTask();
 //            databaseTask.execute();
-            DatabaseTask2 databaseTask2 = new DatabaseTask2();
+            databaseTask2 = new DatabaseTask2();
             databaseTask2.execute();
-            DatabaseTask3 databaseTask3 = new DatabaseTask3();
+            databaseTask3 = new DatabaseTask3();
             databaseTask3.execute();
-            DatabaseTask4 databaseTask4 = new DatabaseTask4();
+            databaseTask4 = new DatabaseTask4();
             databaseTask4.execute();
         }
         TencentMapInitializer.setAgreePrivacy(true);
@@ -550,4 +555,28 @@ public class CardDetailActivity extends AppCompatActivity {
         tip.setText("暂无相关推荐");
 
     }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // 终止所有异步任务
+        cancelAllTasks();
+    }
+
+    private void cancelAllTasks() {
+        // 终止数据库任务
+        if (databaseTask != null && databaseTask.getStatus() == AsyncTask.Status.RUNNING) {
+            databaseTask.cancel(true);
+        }
+        if (databaseTask2 != null && databaseTask2.getStatus() == AsyncTask.Status.RUNNING) {
+            databaseTask2.cancel(true);
+        }
+        if (databaseTask3 != null && databaseTask3.getStatus() == AsyncTask.Status.RUNNING) {
+            databaseTask3.cancel(true);
+        }
+        if (databaseTask4 != null && databaseTask4.getStatus() == AsyncTask.Status.RUNNING) {
+            databaseTask4.cancel(true);
+        }
+    }
+
+
 }

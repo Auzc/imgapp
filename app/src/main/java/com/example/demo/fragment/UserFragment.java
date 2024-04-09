@@ -68,7 +68,7 @@ public class UserFragment extends Fragment {
         UserFragment.Adapter adapter = new UserFragment.Adapter(getChildFragmentManager());
 
         adapter.addFragment(new AllocFragment(), R.drawable.love);
-        adapter.addFragment(new LikeFragment(),  R.drawable.love);
+        adapter.addFragment(new MyLikeFragment(),  R.drawable.love);
 
 //        adapter.addFragment(new UserFragment(),  R.drawable.love);
 

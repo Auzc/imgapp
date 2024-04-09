@@ -36,6 +36,7 @@ public class ListFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private StaggeredGridAdapter mAdapter;
     private List<Card> mCards;
+    private InfoAsyncTask infoAsyncTask;
 
     private static String url = "jdbc:mysql://rm-2ze740g8q9yaf3v06co.mysql.rds.aliyuncs.com:3296/mydesign"
             + "?useUnicode=true&characterEncoding=utf8";    // mysql 数据库连接 url
@@ -67,13 +68,13 @@ public class ListFragment extends Fragment {
             @Override
             public void onRefresh() {
                 // 将 AsyncTask 的执行移到这里
-                new ListFragment.InfoAsyncTask().execute();
+                infoAsyncTask = new InfoAsyncTask();
             }
         });
 
         // 只有在堆栈为空时才执行 AsyncTask
         if (cardStack.isEmpty()) {
-            new ListFragment.InfoAsyncTask().execute();
+            infoAsyncTask = new InfoAsyncTask();
         }
 
         return view;
@@ -207,4 +208,19 @@ public class ListFragment extends Fragment {
         }
         return max;
     }
+    @Override
+    public void onPause() {
+        super.onPause();
+        // 终止所有异步任务
+        cancelAllTasks();
+    }
+
+    private void cancelAllTasks() {
+        // 终止异步任务
+        if (infoAsyncTask != null && infoAsyncTask.getStatus() == AsyncTask.Status.RUNNING) {
+            infoAsyncTask.cancel(true);
+        }
+    }
+
+
 }
