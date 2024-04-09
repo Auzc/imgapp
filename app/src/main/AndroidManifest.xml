@@ -78,6 +78,7 @@
         <activity android:name="com.example.demo.activity.ImagesActivity" />
 
         <activity android:name="com.example.demo.activity.SQLTestActivity" />
+        <activity android:name="com.example.demo.activity.HistoryActivity" />
 
         <activity android:name="com.example.demo.activity.MyWebViewActivity" />
     </application>

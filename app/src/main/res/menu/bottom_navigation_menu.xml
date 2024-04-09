@@ -4,28 +4,28 @@
     <item
         android:id="@+id/action_recommend"
         android:icon="@drawable/recommendation"
-        android:title="推荐"
+        android:title="今日推荐"
         app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/action_list"
         android:icon="@drawable/photo_album"
-        android:title="相册"
+        android:title="融合推荐"
         app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/action_type"
         android:icon="@drawable/type"
         app:showAsAction="ifRoom"
-        android:title="分类" />
+        android:title="分类推荐" />
     <item
         android:id="@+id/action_messages"
         android:icon="@drawable/map1"
-        android:title="地图"
+        android:title="人文地图"
         app:showAsAction="ifRoom"/>
 
     <item
         android:id="@+id/action_settings"
         android:icon="@drawable/user"
-        android:title="用户"
+        android:title="用户兴趣"
         app:showAsAction="ifRoom"/>
 
 </menu>

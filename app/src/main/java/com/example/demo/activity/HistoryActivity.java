@@ -1,71 +1,53 @@
-package com.example.demo.fragment;
+package com.example.demo.activity;
 
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
-import androidx.fragment.app.ListFragment;
 import androidx.viewpager.widget.ViewPager;
 
 import com.example.demo.R;
+import com.example.demo.fragment.HistoryFragment;
+import com.example.demo.fragment.LikeFragment;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
 import java.util.List;
 
-
-public class TypeFragment extends Fragment {
-
+public class HistoryActivity extends AppCompatActivity {
     private ViewPager viewPager;
     private TabLayout tabLayout;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_type, container, false);
-    }
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_history);
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        viewPager = view.findViewById(R.id.view_pager);
-        tabLayout = view.findViewById(R.id.tab_layout);
+        viewPager = findViewById(R.id.view_pager);
+        tabLayout = findViewById(R.id.tab_layout);
 
         setupViewPager(viewPager);
         tabLayout.setupWithViewPager(viewPager);
 
-        // Set icons for each tab
-        //int[] tabIcons = {R.drawable.love, R.drawable.love,R.drawable.love, R.drawable.love};
-//        for (int i = 0; i < 4; i++) {
-//            //tabLayout.getTabAt(i).setIcon(tabIcons[i]);
-//            tabLayout.getTabAt(i).setText("666");
-//        }
-        tabLayout.getTabAt(0).setText("特征数据集1");
-        tabLayout.getTabAt(1).setText("特征数据集2");
-        tabLayout.getTabAt(2).setText("特征数据集3");
+        tabLayout.getTabAt(0).setText("");
+
     }
 
     private void setupViewPager(ViewPager viewPager) {
-        Adapter adapter = new Adapter(getChildFragmentManager());
+        Adapter adapter = new Adapter(getSupportFragmentManager());
 
-        adapter.addFragment(new LikeFragment(), R.drawable.love);
-        adapter.addFragment(new LikeFragment(),  R.drawable.love);
-        adapter.addFragment(new LikeFragment(), R.drawable.love);
-//        adapter.addFragment(new UserFragment(),  R.drawable.love);
+        adapter.addFragment(new HistoryFragment(), R.drawable.love);
+
 
         viewPager.setAdapter(adapter);
     }
 
     private static class Adapter extends FragmentPagerAdapter {
         private final List<Fragment> fragmentList = new ArrayList<>();
-        //private final List<String> fragmentTitleList = new ArrayList<>();
         private final List<Integer> fragmentIconList = new ArrayList<>();
 
         public Adapter(FragmentManager fragmentManager) {
@@ -90,7 +72,6 @@ public class TypeFragment extends Fragment {
 
         public void addFragment(Fragment fragment, int iconResId) {
             fragmentList.add(fragment);
-
             fragmentIconList.add(iconResId);
         }
     }

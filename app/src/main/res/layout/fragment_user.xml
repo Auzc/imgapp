@@ -51,11 +51,11 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
+                    android:layout_gravity="center|left"
                     android:textSize="20sp"
                     android:textColor="@color/RosyBrown"
                     android:layout_marginTop="15dp"
-                    android:text="用户"/>
+                    android:text="测试用户"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -63,7 +63,7 @@
                     android:textSize="15sp"
                     android:textColor="@color/RosyBrown"
                     android:layout_marginTop="10dp"
-                    android:text="ID:"/>
+                    android:text="ID:#000001"/>
             </LinearLayout>
 
         </LinearLayout>
@@ -116,7 +116,7 @@
                     android:layout_gravity="center_horizontal"
                     android:textSize="17sp"
                     android:textColor="@color/white"
-                    android:text="6"/>
+                    android:text="0"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -137,14 +137,14 @@
                     android:layout_gravity="center_horizontal"
                     android:textSize="17sp"
                     android:textColor="@color/white"
-                    android:text="6"/>
+                    android:text="0"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:textSize="10sp"
                     android:textColor="@color/background_gray"
-                    android:text="关注"/>
+                    android:text="粉丝"/>
             </LinearLayout>
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -158,14 +158,14 @@
                     android:layout_gravity="center_horizontal"
                     android:textSize="17sp"
                     android:textColor="@color/white"
-                    android:text="6"/>
+                    android:text="0"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:textSize="10sp"
                     android:textColor="@color/background_gray"
-                    android:text="关注"/>
+                    android:text="获赞与收藏"/>
             </LinearLayout>
 
 
@@ -297,6 +297,7 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:id="@+id/history"
                     android:layout_centerInParent="true"
                     android:background="@drawable/rounded_box_syscolor" />
                 <LinearLayout

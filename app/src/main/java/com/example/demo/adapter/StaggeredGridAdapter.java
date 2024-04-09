@@ -24,6 +24,7 @@ import com.example.demo.sqlHelper.DbOpenHelper;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import java.util.List;
@@ -39,7 +40,7 @@ public class StaggeredGridAdapter extends RecyclerView.Adapter<StaggeredGridAdap
     private String user = "admin1";
     private String password = "Jzc123456";
     private String userId = "user123";
-    private String contentId = "content456";
+
 
     public StaggeredGridAdapter(Context context, int space) {
         this.context = context;
@@ -71,6 +72,7 @@ public class StaggeredGridAdapter extends RecyclerView.Adapter<StaggeredGridAdap
                 @Override
                 public void onClick(View v) {
                     // 在这里处理点击事件，跳转到详情界面
+                    new visAsyncTask(card.getId()).execute();
                     Intent intent = new Intent(context, CardDetailActivity.class);
                     // 在这里可以传递卡片的信息到详情界面
                     //intent.putExtra("card_id", card.getId());
@@ -103,18 +105,37 @@ public class StaggeredGridAdapter extends RecyclerView.Adapter<StaggeredGridAdap
                 .centerCrop()
                 .into(holder.image);
 
-        holder.title.setText(card.getTitle());
+        String temptxt1 = card.getTitle()+"";
+        holder.title.setText(temptxt1);
 
         String temptxt = card.getAuthor();
+        temptxt += "";
         if(temptxt.length()>30){
             temptxt=temptxt.substring(0, 27);
             temptxt+="...";
         }
         holder.author.setText(temptxt);
+        holder.love.setTag(R.drawable.love); // 设置初始状态为未喜欢
 
-        holder.love.setImageResource(R.drawable.love);
-
-        holder.love.setTag(R.drawable.love); // 设置初始状态为喜欢
+        int currentImageResource = (Integer) holder.love.getTag();
+        // 检查当前的图片资源ID，根据不同的状态设置不同的图片
+        if (currentImageResource == R.drawable.love){
+            // 查询用户是否已经点赞
+//            new LikeAsyncTask1(userId, card.getId(), new LikeAsyncTask1.OnQueryCompleteListener() {
+//                @Override
+//                public void onQueryComplete(boolean exists) {
+//                    if (!exists) {
+//                        holder.love.setImageResource(R.drawable.love);
+//
+//
+//                    }else {
+//                        holder.love.setImageResource(R.drawable.loved);
+//                        // 更新标签以便下次点击知道当前状态
+//                        holder.love.setTag(R.drawable.loved);
+//                    }
+//                }
+//            }).execute();
+        }
 
         holder.love.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -179,7 +200,73 @@ public class StaggeredGridAdapter extends RecyclerView.Adapter<StaggeredGridAdap
             }
         }
     }
+public class LikeAsyncTask1 extends AsyncTask<String, Void, Boolean> {
 
+    private String userId;
+    private String contentId;
+
+
+
+    @Override
+    protected Boolean doInBackground(String... voids) {
+        try (Connection connection = DriverManager.getConnection(jdbcUrl, user, password)) {
+            String sql = "SELECT * FROM Like_Table WHERE user_id = ? AND content_id = ?";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+                preparedStatement.setString(1, userId);
+                preparedStatement.setString(2, contentId);
+                // 执行查询操作
+                ResultSet resultSet = preparedStatement.executeQuery();
+                return resultSet.next(); // 如果有匹配的记录，返回 true；否则返回 false
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    protected void onPostExecute(Boolean exists) {
+
+    }
+}
+
+
+public class visAsyncTask extends AsyncTask<String, Void, Boolean> {
+
+        private String contentId;
+
+        public visAsyncTask(String contentId) {
+            this.contentId = contentId;
+        }
+
+        @Override
+        protected Boolean doInBackground(String... voids) {
+            try (Connection connection = DriverManager.getConnection(jdbcUrl, user, password)) {
+                String sql = "INSERT INTO history_table (user_id, content_id) VALUES (?, ?)";
+                try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+                    preparedStatement.setString(1, userId);
+                    preparedStatement.setString(2, contentId); // 使用传入的 contentId
+                    // 执行插入操作
+                    int rowsInserted = preparedStatement.executeUpdate();
+                    return rowsInserted > 0;
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return false;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Boolean success) {
+            if (success) {
+                // 插入成功，显示成功的 Toast 消息
+                //Toast.makeText(context, "点赞成功！", Toast.LENGTH_SHORT).show();
+            } else {
+                // 插入失败，显示失败的 Toast 消息
+                Toast.makeText(context, "传输失败", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
 
     @Override
     public int getItemCount() {

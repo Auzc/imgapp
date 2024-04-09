@@ -577,7 +577,7 @@
                 android:textColor="@color/white"
                 android:textSize="13sp"
                 android:textStyle="bold|italic"
-                android:text="加载中..."
+                android:text="加载中...请稍后"
 
                 />
 

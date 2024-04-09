@@ -72,10 +72,12 @@ public class SimilarityStaggeredGridAdapter extends RecyclerView.Adapter<Similar
                 @Override
                 public void onClick(View v) {
                     // 在这里处理点击事件，跳转到详情界面
+                    new visAsyncTask(cardSimilarity.getCard().getId()).execute();
                     Intent intent = new Intent(context, CardDetailActivity.class);
                     // 在这里可以传递卡片的信息到详情界面
                     //intent.putExtra("card_id", card.getId());
                     intent.putExtra("card", card);
+
                     context.startActivity(intent);
                 }
             });
@@ -103,10 +105,11 @@ public class SimilarityStaggeredGridAdapter extends RecyclerView.Adapter<Similar
                 .placeholder(R.drawable.rounded_box)
                 .centerCrop()
                 .into(holder.image);
-
-        holder.title.setText(cardSimilarity.getCard().getTitle());
+        String temptxt1 = cardSimilarity.getCard().getTitle()+"";
+        holder.title.setText(temptxt1);
 
         String temptxt = cardSimilarity.getCard().getAuthor();
+        temptxt += "";
         if(temptxt.length()>30){
             temptxt=temptxt.substring(0, 27);
             temptxt+="...";
@@ -121,7 +124,7 @@ public class SimilarityStaggeredGridAdapter extends RecyclerView.Adapter<Similar
             holder.similarity.setText("同地点推荐");
 
         }else{
-            holder.similarity.setText("相似度："+decimalFormat.format(cardSimilarity.getSimilarity()));
+            holder.similarity.setText("相关度："+decimalFormat.format(cardSimilarity.getSimilarity()));
         }
 
 
@@ -151,6 +154,42 @@ public class SimilarityStaggeredGridAdapter extends RecyclerView.Adapter<Similar
 
 
 
+    }
+    public class visAsyncTask extends AsyncTask<String, Void, Boolean> {
+
+        private String contentId;
+
+        public visAsyncTask(String contentId) {
+            this.contentId = contentId;
+        }
+
+        @Override
+        protected Boolean doInBackground(String... voids) {
+            try (Connection connection = DriverManager.getConnection(jdbcUrl, user, password)) {
+                String sql = "INSERT INTO history_table (user_id, content_id) VALUES (?, ?)";
+                try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+                    preparedStatement.setString(1, userId);
+                    preparedStatement.setString(2, contentId); // 使用传入的 contentId
+                    // 执行插入操作
+                    int rowsInserted = preparedStatement.executeUpdate();
+                    return rowsInserted > 0;
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return false;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Boolean success) {
+            if (success) {
+                // 插入成功，显示成功的 Toast 消息
+                //Toast.makeText(context, "点赞成功！", Toast.LENGTH_SHORT).show();
+            } else {
+                // 插入失败，显示失败的 Toast 消息
+                Toast.makeText(context, "传输失败", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
     public class LikeAsyncTask extends AsyncTask<String, Void, Boolean> {
 

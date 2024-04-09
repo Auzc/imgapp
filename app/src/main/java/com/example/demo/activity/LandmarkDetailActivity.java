@@ -4,20 +4,8 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
-
 import android.util.Log;
 import android.view.View;
-
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -46,8 +34,17 @@ import com.tencent.tencentmap.mapsdk.maps.model.Marker;
 import com.tencent.tencentmap.mapsdk.maps.model.MarkerOptions;
 import com.tencent.tencentmap.mapsdk.maps.model.OverlayLevel;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
 
-public class CardDetailActivity extends AppCompatActivity {
+
+public class LandmarkDetailActivity extends AppCompatActivity {
     ImageView back_btn;
     private static String driver = "com.mysql.cj.jdbc.Driver";
     private static String url = "jdbc:mysql://rm-2ze740g8q9yaf3v06co.mysql.rds.aliyuncs.com:3296/mydesign"
@@ -117,8 +114,7 @@ public class CardDetailActivity extends AppCompatActivity {
             cardId = mycard.getId();
 //            DatabaseTask databaseTask = new DatabaseTask();
 //            databaseTask.execute();
-            DatabaseTask2 databaseTask2 = new DatabaseTask2();
-            databaseTask2.execute();
+
             DatabaseTask3 databaseTask3 = new DatabaseTask3();
             databaseTask3.execute();
             DatabaseTask4 databaseTask4 = new DatabaseTask4();
@@ -168,7 +164,7 @@ public class CardDetailActivity extends AppCompatActivity {
         wiji.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(CardDetailActivity.this, MyWebViewActivity.class);
+                Intent intent = new Intent(LandmarkDetailActivity.this, MyWebViewActivity.class);
                 // 在这里可以传递卡片的信息到详情界面
 
                 intent.putExtra("url", landmark.getCategory());
@@ -191,7 +187,7 @@ public class CardDetailActivity extends AppCompatActivity {
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(CardDetailActivity.this, ImagesActivity.class);
+                Intent intent = new Intent(LandmarkDetailActivity.this, ImagesActivity.class);
                 // 在这里可以传递卡片的信息到详情界面
                 //intent.putExtra("card_id", card.getId());
                 intent.putExtra("card", mycard);
@@ -205,115 +201,6 @@ public class CardDetailActivity extends AppCompatActivity {
                 finish();
             }
         });
-    }
-
-    // 创建 AsyncTask 来执行数据库操作
-    private class DatabaseTask extends AsyncTask<Void, Void, Void> {
-        @Override
-        protected Void doInBackground(Void... voids) {
-            try (Connection connection1 = DriverManager.getConnection(url, user, password)) {
-                PreparedStatement statement = connection1.prepareStatement("SELECT * FROM Images WHERE id = ?");
-                statement.setString(1, cardId);
-                ResultSet resultSet = statement.executeQuery();
-
-                while (resultSet.next()) {
-                    String id = resultSet.getString("id");
-                    String imgurl = resultSet.getString("url");
-                    String landmarkId = resultSet.getString("landmark_id");
-                    int width = resultSet.getInt("width");
-                    int height = resultSet.getInt("height");
-                    String author = resultSet.getString("author");
-                    String title = resultSet.getString("title");
-                    if (title.length() > 5) {
-                        title = title.substring(5);
-                    }
-                    if (title.length() > 4) {
-                        title = title.substring(0, title.length() - 4);
-                    }
-                    mycard = new Card(title,author,id,imgurl,width,height,landmarkId);
-
-                }
-            } catch (Exception e) {
-                Log.e("getData", "Error getData", e);
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void result) {
-            super.onPostExecute(result);
-            if (mycard != null) {
-
-            } else {
-                Toast.makeText(CardDetailActivity.this, "DatabaseTask Error occurred", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-    private class DatabaseTask2 extends AsyncTask<Void, Void, Void> {
-        @Override
-        protected Void doInBackground(Void... voids) {
-            try (Connection connection = DriverManager.getConnection(url, user, password)) {
-                PreparedStatement statement = connection.prepareStatement("SELECT * FROM image_data WHERE image_id = ?");
-                statement.setString(1, cardId);
-                ResultSet resultSet = statement.executeQuery();
-
-                if (resultSet.next()) {
-                    String imageId = resultSet.getString("image_id");
-                    String typeId1Inception = resultSet.getString("type_id1_inception");
-                    String type1Inception = resultSet.getString("type1_inception");
-                    float confidence1Inception = resultSet.getFloat("confidence1_inception");
-                    String typeId2Inception = resultSet.getString("type_id2_inception");
-                    String type2Inception = resultSet.getString("type2_inception");
-                    float confidence2Inception = resultSet.getFloat("confidence2_inception");
-                    String typeId3Inception = resultSet.getString("type_id3_inception");
-                    String type3Inception = resultSet.getString("type3_inception");
-                    float confidence3Inception = resultSet.getFloat("confidence3_inception");
-                    String typeId1Resnet = resultSet.getString("type_id1_resnet");
-                    String type1Resnet = resultSet.getString("type1_resnet");
-                    float confidence1Resnet = resultSet.getFloat("confidence1_resnet");
-                    String typeId2Resnet = resultSet.getString("type_id2_resnet");
-                    String type2Resnet = resultSet.getString("type2_resnet");
-                    float confidence2Resnet = resultSet.getFloat("confidence2_resnet");
-                    String typeId3Resnet = resultSet.getString("type_id3_resnet");
-                    String type3Resnet = resultSet.getString("type3_resnet");
-                    float confidence3Resnet = resultSet.getFloat("confidence3_resnet");
-                    String typeId4Resnet = resultSet.getString("type_id4_resnet");
-                    String type4Resnet = resultSet.getString("type4_resnet");
-                    float confidence4Resnet = resultSet.getFloat("confidence4_resnet");
-                    String typeId5Resnet = resultSet.getString("type_id5_resnet");
-                    String type5Resnet = resultSet.getString("type5_resnet");
-                    float confidence5Resnet = resultSet.getFloat("confidence5_resnet");
-                    String dominantColor1 = resultSet.getString("dominant_color1");
-                    String dominantColor2 = resultSet.getString("dominant_color2");
-                    String dominantColor3 = resultSet.getString("dominant_color3");
-
-                    // Create an ImageData object with retrieved data
-                    imageData = new ImageData(imageId, typeId1Inception, type1Inception, confidence1Inception,
-                            typeId2Inception, type2Inception, confidence2Inception,
-                            typeId3Inception, type3Inception, confidence3Inception,
-                            typeId1Resnet, type1Resnet, confidence1Resnet,
-                            typeId2Resnet, type2Resnet, confidence2Resnet,
-                            typeId3Resnet, type3Resnet, confidence3Resnet,
-                            typeId4Resnet, type4Resnet, confidence4Resnet,
-                            typeId5Resnet, type5Resnet, confidence5Resnet,
-                            dominantColor1, dominantColor2, dominantColor3);
-                }
-            } catch (Exception e) {
-                Log.e("getData", "Error getData", e);
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void result) {
-            super.onPostExecute(result);
-            if (imageData != null) {
-                updateUI3(imageData);
-                //Toast.makeText(CardDetailActivity.this, cardId, Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(CardDetailActivity.this, "DatabaseTask2 Error occurred", Toast.LENGTH_SHORT).show();
-            }
-        }
     }
     private class DatabaseTask3 extends AsyncTask<Void, Void, Void> {
         @Override
@@ -352,17 +239,18 @@ public class CardDetailActivity extends AppCompatActivity {
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
             if (landmark != null) {
+                updateUI(landmark.getImageUrl(), landmark.getLandmarkId(), landmark.getLandmarkId());
                 updateUI4(landmark);
                 //Toast.makeText(CardDetailActivity.this, card.getLandmark_id(), Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(CardDetailActivity.this, "DatabaseTask3 Error occurred", Toast.LENGTH_SHORT).show();
+                Toast.makeText(LandmarkDetailActivity.this, "DatabaseTask3 Error occurred", Toast.LENGTH_SHORT).show();
             }
         }
     }
 
 
     // 更新 UI
-    private void updateUI(int width, int height, String imgurl, String author, String title) {
+    private void updateUI(String imgurl, String author, String title) {
 
         card_author.setText(author);
         Glide.with(this)
@@ -385,28 +273,7 @@ public class CardDetailActivity extends AppCompatActivity {
                 .into(imageView);
 
     }
-    private void updateUI3(ImageData imageData1) {
 
-        featuresTagTextView1.setText(imageData1.getType1Inception()+" | "+decimalFormat.format(imageData1.getConfidence1Inception()));
-        featuresTagTextView2.setText(imageData1.getType2Inception()+" | "+decimalFormat.format(imageData1.getConfidence2Inception()));
-        featuresTagTextView3.setText(imageData1.getType3Inception()+" | "+decimalFormat.format(imageData1.getConfidence3Inception()));
-        ResNetFeaturesTagTextView1.setText(imageData1.getType1Resnet()+" | "+decimalFormat.format(imageData1.getConfidence1Resnet()));
-        ResNetFeaturesTagTextView2.setText(imageData1.getType2Resnet()+" | "+decimalFormat.format(imageData1.getConfidence2Resnet()));
-        ResNetFeaturesTagTextView3.setText(imageData1.getType3Resnet()+" | "+decimalFormat.format(imageData1.getConfidence3Resnet()));
-        tagTextView1.setText(imageData1.getDominantColor1());
-        tagTextView2.setText(imageData1.getDominantColor2());
-        tagTextView3.setText(imageData1.getDominantColor3());
-        String dominantColorHex1 = imageData1.getDominantColor1();
-        int color1 = Color.parseColor(dominantColorHex1);
-        colorTextView1.setBackgroundColor(color1);
-        String dominantColorHex2 = imageData1.getDominantColor2();
-        int color2 = Color.parseColor(dominantColorHex2);
-        colorTextView1.setBackgroundColor(color2);
-        String dominantColorHex3 = imageData1.getDominantColor3();
-        int color3 = Color.parseColor(dominantColorHex3);
-        colorTextView1.setBackgroundColor(color3);
-
-    }
     private void updateUI4(Landmark landmark) {
         location.setText(landmark.getLocation());
         Marker marker = tencentMap.addMarker(new MarkerOptions(new LatLng(landmark.getLatitude(), landmark.getLongitude())));
@@ -431,7 +298,7 @@ public class CardDetailActivity extends AppCompatActivity {
             List<CardSimilarity> cardSimilarityList = new ArrayList<>();
 
             try (Connection connection = DriverManager.getConnection(url, user, password)) {
-                PreparedStatement statement = connection.prepareStatement("SELECT * FROM imagesimilarity" +
+                PreparedStatement statement = connection.prepareStatement("SELECT * FROM imagesimilarit" +
                         " INNER JOIN Images ON imagesimilarity.Image_ID_2 = Images.id WHERE Image_ID_1 = ?");
                 statement.setString(1, mycard.getId());
                 ResultSet resultSet = statement.executeQuery();
@@ -456,14 +323,12 @@ public class CardDetailActivity extends AppCompatActivity {
 
                     Card card1 = new Card(title, author, id, imgurl, width, height, landmarkId);
                     cardSimilarityList.add(new CardSimilarity(card1, similarity));
-                    //Log.d("getData", "Retrieved Data - ID: " + id + ", Image URL: " + imgurl + ", Landmark ID: " + landmarkId + ", Width: " + width + ", Height: " + height + ", Author: " + author + ", Title: " + title + ", Similarity: " + similarity);
-
                 }
             } catch (SQLException e) {
                 Log.e("getData", "Error getData", e);
             }
             try (Connection connection = DriverManager.getConnection(url, user, password)) {
-                PreparedStatement statement = connection.prepareStatement("SELECT * FROM imagesimilarity_color INNER JOIN Images ON imagesimilarity_color.Image_ID_2 = Images.id WHERE Image_ID_1 = ?");
+                PreparedStatement statement = connection.prepareStatement("SELECT * FROM imagesimilarity_color INNER JOIN Images ON imagesimilarity.Image_ID_2 = Images.id WHERE Image_ID_1 = ?");
                 statement.setString(1, mycard.getId());
                 ResultSet resultSet = statement.executeQuery();
 
@@ -526,7 +391,7 @@ public class CardDetailActivity extends AppCompatActivity {
             } catch (SQLException e) {
                 Log.e("getData", "Error getData", e);
             }
-            Collections.shuffle(cardSimilarityList);
+
             return cardSimilarityList;
         }
 

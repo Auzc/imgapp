@@ -179,7 +179,7 @@
                 String dominantColorHex3 = pageData.getImageData().getDominantColor3();
                 int color3 = Color.parseColor(dominantColorHex3);
                 holder.colorTextView1.setBackgroundColor(color3);
-                holder.location.setText(pageData.getLandmark().getLocation());
+                holder.location.setText(pageData.getLandmark().getLocation()+"");
                 holder.tencentMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(pageData.getLandmark().getLatitude(),pageData.getLandmark().getLongitude()), 4));
                 holder.img.setOnClickListener(new View.OnClickListener() {
                     @Override
