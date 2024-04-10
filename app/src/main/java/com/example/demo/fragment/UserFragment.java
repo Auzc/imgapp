@@ -67,7 +67,7 @@ public class UserFragment extends Fragment {
     private void setupViewPager(ViewPager viewPager) {
         UserFragment.Adapter adapter = new UserFragment.Adapter(getChildFragmentManager());
 
-        adapter.addFragment(new AllocFragment(), R.drawable.love);
+        adapter.addFragment(new ChartFragment(), R.drawable.love);
         adapter.addFragment(new MyLikeFragment(),  R.drawable.love);
 
 //        adapter.addFragment(new UserFragment(),  R.drawable.love);

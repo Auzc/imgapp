@@ -116,6 +116,7 @@ public class MyLikeFragment extends Fragment {
                                 "FROM Images i " +
                                 "INNER JOIN like_table h ON i.id = h.content_id " +
                                 "WHERE h.user_id = ? " +
+                                "ORDER BY h.timestamp DESC " +
                                 "LIMIT ? OFFSET ?"
                 );
                 statement.setString(1, "user123");

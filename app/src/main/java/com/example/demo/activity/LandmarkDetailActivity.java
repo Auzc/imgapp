@@ -96,7 +96,19 @@ public class LandmarkDetailActivity extends AppCompatActivity {
         tencentMap = mapView.getMap();
 
         Marker marker = tencentMap.addMarker(new MarkerOptions(new LatLng(landmark.getLatitude(), landmark.getLongitude())));
-        tencentMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(landmark.getLatitude(), landmark.getLongitude()), 4));
+        double latitude = landmark.getLatitude();
+        double longitude = landmark.getLongitude();
+        TextView satellite1 = findViewById(R.id.satellite1);
+        if (latitude >= 18.0 && latitude <= 54.0 && longitude >= 73.0 && longitude <= 135.0) {
+            // 经纬度在中国范围内
+            tencentMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 18));
+            tencentMap.setMapType(TencentMap.MAP_TYPE_SATELLITE);
+            satellite1.setText("取消切换");
+        } else {
+            // 经纬度不在中国范围内
+            tencentMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 4));
+        }
+
         VisualLayer mVisualLayer = tencentMap.addVisualLayer(new VisualLayerOptions("03097e5d0ff8") //xxxxxxxx为官网配置生成对应图层的图层id
                 .newBuilder()
                 .setAlpha(1)
@@ -104,7 +116,7 @@ public class LandmarkDetailActivity extends AppCompatActivity {
                 .setZIndex(10)
                 .setTimeInterval(15)
                 .build());
-        TextView satellite1 = findViewById(R.id.satellite1);
+
         ImageButton satellite = findViewById(R.id.satellite);
         satellite.setOnClickListener(new View.OnClickListener() {
             @Override

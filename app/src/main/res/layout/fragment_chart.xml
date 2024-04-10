@@ -1,212 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
-
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_height="match_parent">
+        <TextView
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="15dp"
+            android:textColor="@color/RosyBrown"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:text="猜您喜欢"
+            />
+        <View
+            android:layout_width="match_parent"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_height="0.1dp"
+            android:background="@color/light_black" />
+        <com.github.mikephil.charting.charts.RadarChart
+            android:id="@+id/radarChart"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:layout_margin="16dp" />
 
         <View
-            android:id="@+id/view_statues"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:background="@color/white" />
+            android:layout_height="20dp"
 
-        <RelativeLayout
-            android:id="@+id/v_title_layout"
+             />
+        <TextView
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:textColor="@color/RosyBrown"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:text="经常浏览"
+            />
+        <View
             android:layout_width="match_parent"
-            android:layout_height="44dp"
-            android:background="@color/white">
-
-
-            <ImageView
-                android:id="@+id/v_back"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="10dp"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:src="@drawable/back" />
-
-            <LinearLayout
-                android:id="@+id/v_date"
-                android:layout_width="wrap_content"
-                android:layout_height="34dp"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="20dp"
-                android:background="@drawable/border_shape"
-                android:gravity="center"
-                android:paddingLeft="7dp"
-                android:paddingRight="7dp">
-
-                <TextView
-                    android:id="@+id/tv_date"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="2022.05"
-                    android:textColor="@color/white"
-                    android:textSize="16sp" />
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/back" />
-            </LinearLayout>
-        </RelativeLayout>
-
-        <androidx.core.widget.NestedScrollView
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_height="0.1dp"
+            android:background="@color/light_black" />
+        <com.github.mikephil.charting.charts.BarChart
+            android:id="@+id/bar_chart"
+            android:layout_margin="16dp"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="300dp" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
+            />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="20dp"
-                    android:layout_marginTop="7dp"
-                    android:gravity="center_vertical"
-                    android:text="統計"
-                    android:textColor="@color/syscolor"
-                    android:textSize="20sp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="20dp"
-                    android:layout_marginTop="18dp"
-                    android:gravity="center_vertical"
-                    android:text="記錄"
-                    android:textColor="@color/syscolor"
-                    android:textSize="20sp" />
-
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="18dp"
-                    android:paddingLeft="20dp"
-                    android:paddingRight="20dp">
-
-                    <com.github.mikephil.charting.charts.PieChart
-                        android:id="@+id/v_pie_chart"
-                        android:layout_width="match_parent"
-                        android:layout_height="228dp" />
-                </FrameLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:paddingLeft="20dp"
-                    android:paddingRight="20dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:drawableLeft="@drawable/back"
-                        android:drawablePadding="10dp"
-                        android:gravity="center_vertical"
-                        android:text="掃碼"
-                        android:textColor="@color/syscolor"
-                        android:textSize="16sp" />
-
-                    <View
-                        android:layout_width="0dp"
-                        android:layout_height="1dp"
-                        android:layout_weight="1" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:drawableLeft="@drawable/back"
-                        android:drawablePadding="10dp"
-                        android:gravity="center_vertical"
-                        android:text="歷史價格"
-                        android:textColor="@color/syscolor"
-                        android:textSize="16sp" />
-
-                    <View
-                        android:layout_width="0dp"
-                        android:layout_height="1dp"
-                        android:layout_weight="1" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:drawableLeft="@drawable/back"
-                        android:drawablePadding="10dp"
-                        android:gravity="center_vertical"
-                        android:text="個性二維碼"
-                        android:textColor="@color/syscolor"
-                        android:textSize="16sp" />
-                </LinearLayout>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="20dp"
-                    android:layout_marginTop="20dp"
-                    android:gravity="center_vertical"
-                    android:text="訂單"
-                    android:textColor="@color/syscolor"
-                    android:textSize="20sp" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:paddingLeft="20dp"
-                    android:paddingRight="20dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:drawableLeft="@drawable/back"
-                        android:drawablePadding="8dp"
-                        android:gravity="center_vertical"
-                        android:text="未購買"
-                        android:textColor="@color/syscolor"
-                        android:textSize="16sp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_marginLeft="20dp"
-                        android:drawableLeft="@drawable/back"
-                        android:drawablePadding="8dp"
-                        android:gravity="center_vertical"
-                        android:text="已購買"
-                        android:textColor="@color/syscolor"
-                        android:textSize="16sp" />
-                </LinearLayout>
-
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    android:paddingLeft="20dp"
-                    android:paddingRight="10dp"
-                    android:layout_marginBottom="20dp">
-
-                    <com.github.mikephil.charting.charts.LineChart
-                        android:id="@+id/v_line_chart"
-                        android:layout_width="match_parent"
-                        android:layout_height="228dp" />
-                </FrameLayout>
-            </LinearLayout>
-        </androidx.core.widget.NestedScrollView>
     </LinearLayout>
-
-</layout>
+</ScrollView>

@@ -3,17 +3,17 @@
 
     <item
         android:id="@+id/action_recommend"
-        android:icon="@drawable/recommendation"
+        android:icon="@drawable/recommendation1"
         android:title="今日推荐"
         app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/action_list"
-        android:icon="@drawable/photo_album"
+        android:icon="@drawable/photo_album1"
         android:title="融合推荐"
         app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/action_type"
-        android:icon="@drawable/type"
+        android:icon="@drawable/type1"
         app:showAsAction="ifRoom"
         android:title="分类推荐" />
     <item
@@ -24,7 +24,7 @@
 
     <item
         android:id="@+id/action_settings"
-        android:icon="@drawable/user"
+        android:icon="@drawable/user3"
         android:title="用户兴趣"
         app:showAsAction="ifRoom"/>
 
